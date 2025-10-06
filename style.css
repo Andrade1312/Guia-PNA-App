@@ -71,6 +71,7 @@ h1 {
 .checkbox-group label {
     margin-bottom: 0; /* Ajuste para alinear con el checkbox */
     font-weight: normal;
+    cursor: pointer; /* Agregamos cursor pointer para indicar que es clickeable */
 }
 
 button {
@@ -98,21 +99,52 @@ button:hover {
     border-radius: 8px;
     min-height: 80px;
     display: flex;
-    align-items: center;
+    flex-direction: column; /* Para que los elementos de lista se apilen */
     justify-content: center;
-    text-align: center;
+    align-items: flex-start; /* Alinea el texto a la izquierda */
+    text-align: left; /* Alinea el texto a la izquierda */
     color: #155724;
     font-size: 1.1em;
     line-height: 1.6;
 }
 
-.result-box p {
+.result-box p, .result-box ul {
     margin: 0;
+    width: 100%; /* Asegura que el contenido ocupe todo el ancho */
+}
+
+.result-box ul {
+    list-style-type: disc; /* Puntos para las listas */
+    padding-left: 20px; /* Espacio para los puntos */
+}
+
+.result-box li {
+    margin-bottom: 5px;
+}
+
+.result-box h2, .result-box h3 {
+    width: 100%;
+    text-align: center; /* Centrar títulos de sección */
+    color: #0056b3;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+.result-box h2:first-child, .result-box h3:first-child {
+    margin-top: 0; /* Sin margen superior para el primer título */
 }
 
 .result-box .error {
     color: #dc3545; /* Color rojo para errores */
     font-weight: bold;
+    text-align: center;
+}
+.result-box .recomendacion-grupo {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    background-color: #f8fdf9;
 }
 
 /* Responsivo básico */
