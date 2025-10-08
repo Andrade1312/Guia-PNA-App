@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Guía Pesquisa Nacional Ampliada</title>
 <style>
+  /* Estilos manteniendo la estructura visual, no modificados */
   body {
     font-family: "Segoe UI", sans-serif;
     background: #f7f9fc;
@@ -194,151 +195,45 @@ document.addEventListener("DOMContentLoaded", () => {
   const m0Menos40h = document.getElementById("m0Menos40h");
   const transfusionPreviaM1 = document.getElementById("transfusionPreviaM1");
   const pesquisaDudosaM1 = document.getElementById("pesquisaDudosaM1");
-  const muestraPreviaAltaMenos10Dias = document.getElementById("muestraPreviaAltaMenos10Dias");
-  const transfusionMenos7Dias = document.getElementById("transfusionMenos7Dias");
+  const muestraPrevia = document.getElementById("muestraPreviaAltaMenos10Dias");
+  const transfusionMenos7 = document.getElementById("transfusionMenos7Dias");
+  const fechaM0 = document.getElementById("fechaM0");
+  const fechaM1 = document.getElementById("fechaM1");
+  const fechaM2 = document.getElementById("fechaM2");
+  const fechaM3 = document.getElementById("fechaM3");
   const fechaNacimiento = document.getElementById("fechaNacimiento");
-  const resultadosDiv = document.getElementById("resultados");
+  const calcularBtn = document.getElementById("calcularBtn");
+  const resultados = document.getElementById("resultados");
 
-  const fechasTomadas = {
-    M0: document.getElementById("fechaM0"),
-    M1: document.getElementById("fechaM1"),
-    M2: document.getElementById("fechaM2"),
-    M3: document.getElementById("fechaM3"),
-  };
+  // Evento al hacer click en el botón de calcular
+  calcularBtn.addEventListener("click", () => {
+    const fechaNac = new Date(fechaNacimiento.value);
+    const fechaM2Date = new Date(fechaM2.value);
+    const edadEnDias = Math.floor((fechaM2Date - fechaNac) / (1000 * 60 * 60 * 24)); 
 
-  const actualizarCondicionales = () => {
-    const esUti = unidad.value === "uti_uci";
-    condUti.style.display = esUti ? "block" : "none";
-    condM3a.style.display = esUti ? "block" : "none";
-    m0Tiempo.style.display = esUti && recibioM0.checked ? "flex" : "none";
-  };
-  unidad.addEventListener("change", actualizarCondicionales);
-  recibioM0.addEventListener("change", actualizarCondicionales);
-  actualizarCondicionales();
+    let muestra2Alert = "";
+    let muestra2Ok = "OK";
 
-  const diasEntre = (f1, f2) => (!f1 || !f2 ? NaN : (new Date(f2) - new Date(f1)) / (1000 * 60 * 60 * 24));
-  const sumarDias = (fechaStr, dias) => {
-    if (!fechaStr) return null;
-    const f = new Date(fechaStr);
-    f.setDate(f.getDate() + dias);
-    return f.toISOString().slice(0, 10);
-  };
-  const edadEnDias = (fecha) => diasEntre(fechaNacimiento.value, fecha);
-
-  const validarInputs = () => {
-    if (!fechaNacimiento.value) return "Debes ingresar la Fecha de Nacimiento.";
-    if (isNaN(parseInt(edadGestacional.value))) return "Edad gestacional inválida.";
-    if (isNaN(parseInt(peso.value))) return "Peso inválido.";
-    return null;
-  };
-
-  document.getElementById("calcularBtn").addEventListener("click", () => {
-    const error = validarInputs();
-    if (error) return (resultadosDiv.innerHTML = `<p class="alerta">⚠️ ${error}</p>`);
-
-    const esUti = unidad.value === "uti_uci";
-    const eg = parseInt(edadGestacional.value);
-    const pesoVal = parseInt(peso.value);
-    const nac = fechaNacimiento.value;
-
-    let muestras = [];
-    let alertas = [];
-
-    // --- CUIDADOS BÁSICOS ---
-    if (!esUti) {
-      muestras.push({ id: "M1", descripcion: "Primera muestra entre 40–48 h de vida", diaRecomendado: 2 });
-      if (eg < 37 || pesoVal < 2500)
-        muestras.push({ id: "M2", descripcion: "Segunda muestra a los 15 días (pretérmino o bajo peso)", diaRecomendado: 15 });
-      if (sindromeDown.checked)
-        muestras.push({ id: "M3", descripcion: "Tercera muestra a los 28 días (Síndrome de Down)", diaRecomendado: 28 });
+    // Muestra 2 antes de 28 días
+    if (edadEnDias < 28) {
+      muestra2Alert = "⚠️ La muestra M2 fue tomada antes de los 28 días, favor corroborar corresponde por alta médica";
+      muestra2Ok = "CORROBORAR";
     }
 
-    // --- UTI / UCI ---
-    else {
-      muestras.push({ id: "M0", descripcion: "Muestra al ingreso (día 0)", diaRecomendado: 0 });
-      if (recibioM0.checked && m0Menos40h.checked)
-        muestras.push({ id: "M1", descripcion: "Nueva muestra entre 48–72h si M0 fue <40h", diaRecomendado: 3 });
-      else if (!recibioM0.checked)
-        muestras.push({ id: "M1", descripcion: "Muestra entre 40–48h (sin M0 previa)", diaRecomendado: 2 });
-
-      if (eg < 37 || pesoVal < 2500 || transfusionPreviaM1.checked || pesquisaDudosaM1.checked)
-        muestras.push({ id: "M2", descripcion: "Nueva muestra a los 28 días o al alta", diaRecomendado: 28 });
-
-      // M3a
-      if (
-        fechasTomadas.M2.value &&
-        edadEnDias(fechasTomadas.M2.value) < 10 &&
-        (eg < 37 || pesoVal < 2500 || transfusionMenos7Dias.checked)
-      ) {
-        muestras.push({
-          id: "M3a",
-          descripcion: "Nueva muestra (M3a) a los 15 días por pretérmino/bajo peso o transfusión reciente",
-          diaRecomendado: 15
-        });
-      }
-
-      // M3b
-      if (
-        sindromeDown.checked &&
-        fechasTomadas.M2.value &&
-        edadEnDias(fechasTomadas.M2.value) < 21
-      ) {
-        muestras.push({
-          id: "M3b",
-          descripcion: "Nueva muestra (M3b) a los 28 días por Síndrome de Down y muestra previa <21 días",
-          diaRecomendado: 28
-        });
-      }
+    // Condición para M3a
+    let muestra3aOk = "No Aplica";
+    if (muestraPrevia.checked && edadEnDias < 10 && (peso.value < 2500 || edadGestacional.value < 37 || transfusionMenos7.checked)) {
+      muestra3aOk = "Muestra 3A generada";
     }
 
-    const esFechaCorrecta = (fechaTomada, diaRecomendado) => {
-      if (!fechaTomada) return false;
-      const diff = Math.abs(edadEnDias(fechaTomada) - diaRecomendado);
-      return diff <= 1;
-    };
-
-    const muestrasValidas = muestras.map(m => m.id);
-    ["M0","M1","M2","M3","M3a","M3b"].forEach(id => {
-      const fechaT = fechasTomadas[id]?.value;
-      if (fechaT) {
-        if (!muestrasValidas.includes(id)) {
-          alertas.push(`⚠️ La muestra ${id} fue ingresada pero no corresponde según el algoritmo.`);
-        } else {
-          const mObj = muestras.find(m => m.id === id);
-          if (!esFechaCorrecta(fechaT, mObj.diaRecomendado)) {
-            alertas.push(`⚠️ La muestra ${id} fue tomada fuera del rango recomendado.`);
-          }
-        }
-      }
-    });
-
-    // Texto explicativo
-    let texto = `<p><strong>Recomendación:</strong> Corresponde la toma de las siguientes muestras según el algoritmo:</p>`;
-    muestras.forEach(m => {
-      const fechaRec = sumarDias(nac, m.diaRecomendado);
-      texto += `<p>• Corresponde la ${m.id} (${m.descripcion}). Se recomienda alrededor del <strong>${fechaRec}</strong>.</p>`;
-    });
-    if (alertas.length) texto += `<div class="alerta">${alertas.join("<br>")}</div>`;
-
-    // Tabla
-    let html = `${texto}<table><thead><tr>
-    <th>Muestra</th><th>Descripción</th><th>Fecha recomendada</th><th>Fecha tomada</th><th>Estado</th><th>Observaciones</th></tr></thead><tbody>`;
-    muestras.forEach(m => {
-      const fechaRec = sumarDias(nac, m.diaRecomendado);
-      const fechaT = fechasTomadas[m.id]?.value || "-";
-      let estado = "Pendiente", clase="pending", obs = "Se recomienda según protocolo.";
-      if (fechaT !== "-") {
-        if (esFechaCorrecta(fechaT, m.diaRecomendado)) { estado="Correcta"; clase="ok"; obs="Tomada dentro del rango recomendado."; }
-        else { estado="⚠️ Desviada"; clase="warning"; obs="Tomada fuera del rango recomendado."; }
-      }
-      html += `<tr><td>${m.id}</td><td>${m.descripcion}</td><td>${fechaRec}</td><td>${fechaT}</td><td class="${clase}">${estado}</td><td>${obs}</td></tr>`;
-    });
-    html += "</tbody></table>";
-    resultadosDiv.innerHTML = html;
+    resultados.innerHTML = ` 
+      <div class="alerta">${muestra2Alert}</div>
+      <p><strong>Muestra 2:</strong> ${muestra2Ok}</p>
+      <p><strong>Muestra 3A:</strong> ${muestra3aOk}</p>
+    `;
   });
 });
-</script>
+  </script>
 </body>
 </html>
-
 
