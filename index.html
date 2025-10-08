@@ -1,241 +1,194 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guía PNA de Tomas de Muestra</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 700px;
-            margin: 20px auto;
-            padding: 10px;
-        }
-        .container {
-            border: 1px solid #ccc;
-            padding: 15px;
-            border-radius: 8px;
-            background: #f9f9f9;
-        }
-        h1, h2, h3 {
-            text-align: center;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        input[type="number"],
-        select,
-        input[type="date"] {
-            width: 100%;
-            padding: 6px;
-            margin-top: 4px;
-            box-sizing: border-box;
-        }
-        .checkbox-group {
-            margin-top: 10px;
-        }
-        .checkbox-group label {
-            font-weight: normal;
-            display: inline-block;
-            margin-left: 6px;
-        }
-        button {
-            margin-top: 15px;
-            padding: 10px 15px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 4px;
-            border: none;
-            background-color: #007BFF;
-            color: white;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .result-box {
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            padding: 15px;
-            background: white;
-            white-space: pre-wrap;
-            min-height: 100px;
-        }
-        .info-text {
-            text-align: center;
-            font-style: italic;
-            margin-top: -10px;
-            margin-bottom: 20px;
-            color: #555;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Guía PNA de Tomas de Muestra</h1>
-        <p class="info-text">Creado por: Eu. Carlos Andrade</p>
+        <p style="text-align:center; font-style:italic;">Creado por: Eu. Carlos Andrade</p>
 
-        <label for="unidadIngreso">Unidad de Ingreso:</label>
-        <select id="unidadIngreso">
-            <option value="cuidados_basicos">Puerperio/Puericultura/Cuidados Básicos</option>
-            <option value="uti_uci">UTI-UCI</option>
-        </select>
-
-        <label for="edadGestacional">Edad Gestacional (semanas):</label>
-        <input type="number" id="edadGestacional" min="20" max="45" value="38" />
-
-        <label for="pesoNacimiento">Peso de Nacimiento (gramos):</label>
-        <input type="number" id="pesoNacimiento" min="500" max="6000" value="3000" />
-
-        <div class="checkbox-group">
-            <input type="checkbox" id="sindromeDown" />
-            <label for="sindromeDown">Diagnóstico de Síndrome de Down</label>
+        <div class="input-group">
+            <label for="unidadIngreso">Unidad de Ingreso:</label>
+            <select id="unidadIngreso">
+                <option value="cuidados_basicos">Puerperio/Puericultura/Cuidados Básicos</option>
+                <option value="uti_uci">UTI-UCI</option>
+            </select>
         </div>
 
-        <label for="fechaNacimiento">Fecha de Nacimiento:</label>
-        <input type="date" id="fechaNacimiento" />
+        <div class="input-group">
+            <label for="edadGestacional">Edad Gestacional (semanas):</label>
+            <input type="number" id="edadGestacional" min="20" max="45" value="38">
+        </div>
+
+        <div class="input-group">
+            <label for="pesoNacimiento">Peso de Nacimiento (gramos):</label>
+            <input type="number" id="pesoNacimiento" min="500" max="6000" value="3000">
+        </div>
+
+        <!-- Condicionales UTI-UCI -->
+        <div id="condicionales-uti-uci" style="display:none;">
+            <div class="input-group checkbox-group">
+                <input type="checkbox" id="recibioM0">
+                <label for="recibioM0">¿Recibió Muestra 0 (M0)?</label>
+            </div>
+            <div class="input-group checkbox-group" id="m0-tiempo-group" style="display:none;">
+                <input type="checkbox" id="m0Menos40h">
+                <label for="m0Menos40h">¿Muestra M0 fue tomada &lt; 40h de vida?</label>
+            </div>
+            <div class="input-group checkbox-group">
+                <input type="checkbox" id="transfusionPreviaM1">
+                <label for="transfusionPreviaM1">¿Transfusión previa a M1?</label>
+            </div>
+            <div class="input-group checkbox-group">
+                <input type="checkbox" id="pesquisaDudosaM1">
+                <label for="pesquisaDudosaM1">¿Pesquisa dudosa en M1?</label>
+            </div>
+        </div>
+
+        <div id="condicionales-m3a" style="display:none;">
+            <div class="input-group checkbox-group">
+                <input type="checkbox" id="muestraPreviaAltaMenos10Dias">
+                <label for="muestraPreviaAltaMenos10Dias">¿Muestra previa al alta &lt; 10 días de vida?</label>
+            </div>
+            <div class="input-group checkbox-group">
+                <input type="checkbox" id="transfusionMenos7Dias">
+                <label for="transfusionMenos7Dias">¿Transfusión &lt; 7 días desde muestra previa?</label>
+            </div>
+        </div>
+
+        <div class="input-group checkbox-group">
+            <input type="checkbox" id="sindromeDown">
+            <label for="sindromeDown">¿Diagnóstico de Síndrome de Down?</label>
+        </div>
+
+        <div class="input-group">
+            <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+            <input type="date" id="fechaNacimiento">
+        </div>
 
         <h3>Fechas de toma de muestras realizadas (si ya las tienen)</h3>
-        <label for="fechaM1">Fecha Muestra 1 (M1):</label>
-        <input type="date" id="fechaM1" />
+        <div class="input-group"><label for="fechaM0">Muestra 0 (M0):</label><input type="date" id="fechaM0"></div>
+        <div class="input-group"><label for="fechaM1">Muestra 1 (M1):</label><input type="date" id="fechaM1"></div>
+        <div class="input-group"><label for="fechaM2">Muestra 2 (M2):</label><input type="date" id="fechaM2"></div>
+        <div class="input-group"><label for="fechaM3">Muestra 3 (M3):</label><input type="date" id="fechaM3"></div>
 
-        <label for="fechaM2">Fecha Muestra 2 (M2):</label>
-        <input type="date" id="fechaM2" />
-
-        <label for="fechaM3">Fecha Muestra 3 (M3):</label>
-        <input type="date" id="fechaM3" />
-
-        <button id="calcularBtn">Calcular Recomendación</button>
+        <div class="input-group">
+            <button id="calcularBtn">Calcular Recomendación</button>
+        </div>
 
         <div class="result-box" id="resultados">
-            Introduce los datos y haz clic en "Calcular Recomendación".
+            <p>Introduce los datos y haz clic en "Calcular Recomendación".</p>
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const unidadIngresoSelect = document.getElementById('unidadIngreso');
-            const edadGestacionalInput = document.getElementById('edadGestacional');
-            const pesoNacimientoInput = document.getElementById('pesoNacimiento');
-            const sindromeDownCheckbox = document.getElementById('sindromeDown');
-            const fechaNacimientoInput = document.getElementById('fechaNacimiento');
-            const fechaM1Input = document.getElementById('fechaM1');
-            const fechaM2Input = document.getElementById('fechaM2');
-            const fechaM3Input = document.getElementById('fechaM3');
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Referencias ---
+    const unidadIngreso = document.getElementById('unidadIngreso');
+    const edadGestacional = document.getElementById('edadGestacional');
+    const pesoNacimiento = document.getElementById('pesoNacimiento');
+    const sindromeDown = document.getElementById('sindromeDown');
 
-            const calcularBtn = document.getElementById('calcularBtn');
-            const resultadosDiv = document.getElementById('resultados');
+    const condUtiUci = document.getElementById('condicionales-uti-uci');
+    const recibioM0 = document.getElementById('recibioM0');
+    const m0TiempoGroup = document.getElementById('m0-tiempo-group');
+    const m0Menos40h = document.getElementById('m0Menos40h');
+    const transfusionPreviaM1 = document.getElementById('transfusionPreviaM1');
+    const pesquisaDudosaM1 = document.getElementById('pesquisaDudosaM1');
+    const condM3a = document.getElementById('condicionales-m3a');
+    const muestraPreviaAltaMenos10Dias = document.getElementById('muestraPreviaAltaMenos10Dias');
+    const transfusionMenos7Dias = document.getElementById('transfusionMenos7Dias');
 
-            // Función para sumar días a una fecha (string yyyy-mm-dd)
-            function sumarDias(fechaStr, dias) {
-                const fecha = new Date(fechaStr);
-                fecha.setDate(fecha.getDate() + dias);
-                return fecha.toISOString().slice(0, 10);
-            }
+    const fechaNacimiento = document.getElementById('fechaNacimiento');
+    const fechaM0 = document.getElementById('fechaM0');
+    const fechaM1 = document.getElementById('fechaM1');
+    const fechaM2 = document.getElementById('fechaM2');
+    const fechaM3 = document.getElementById('fechaM3');
 
-            calcularBtn.addEventListener('click', () => {
-                const unidadIngreso = unidadIngresoSelect.value;
-                const edadGestacional = parseInt(edadGestacionalInput.value);
-                const pesoNacimiento = parseInt(pesoNacimientoInput.value);
-                const tieneSindromeDown = sindromeDownCheckbox.checked;
-                const fechaNacimiento = fechaNacimientoInput.value;
+    const resultadosDiv = document.getElementById('resultados');
+    const calcularBtn = document.getElementById('calcularBtn');
 
-                if (!fechaNacimiento) {
-                    resultadosDiv.textContent = 'Por favor, ingresa la fecha de nacimiento.';
-                    return;
-                }
-                if (isNaN(edadGestacional) || isNaN(pesoNacimiento)) {
-                    resultadosDiv.textContent = 'Por favor, ingresa valores válidos para Edad Gestacional y Peso de Nacimiento.';
-                    return;
-                }
+    // --- Mostrar/Ocultar dinámico ---
+    function actualizarCampos() {
+        if (unidadIngreso.value === 'uti_uci') {
+            condUtiUci.style.display = 'block';
+            condM3a.style.display = 'block';
+            m0TiempoGroup.style.display = recibioM0.checked ? 'block' : 'none';
+        } else {
+            condUtiUci.style.display = 'none';
+            condM3a.style.display = 'none';
+        }
+    }
+    unidadIngreso.addEventListener('change', actualizarCampos);
+    recibioM0.addEventListener('change', actualizarCampos);
+    actualizarCampos();
 
-                // Paso 1: Armar la recomendación base según criterios
-                let recomendaciones = [];
+    // --- Utilidad: sumar días ---
+    const sumarDias = (fechaStr, dias) => {
+        if (!fechaStr) return null;
+        const f = new Date(fechaStr);
+        f.setDate(f.getDate() + dias);
+        return f.toISOString().split('T')[0];
+    };
 
-                if (unidadIngreso === 'cuidados_basicos') {
-                    recomendaciones.push({
-                        nombre: 'Muestra 1 (M1)',
-                        descripcion: 'Entre 40-48 horas de vida.',
-                        fechaRecomendada: sumarDias(fechaNacimiento, 2) // 2 días ~ 48h
-                    });
+    // --- Cálculo principal ---
+    calcularBtn.addEventListener('click', () => {
+        const eg = parseInt(edadGestacional.value);
+        const peso = parseInt(pesoNacimiento.value);
+        const nac = fechaNacimiento.value;
+        if (!nac || isNaN(eg) || isNaN(peso)) {
+            resultadosDiv.innerHTML = `<p class="error">Por favor, completa Edad Gestacional, Peso y Fecha de Nacimiento.</p>`;
+            return;
+        }
 
-                    if (edadGestacional < 37 || pesoNacimiento < 2500) {
-                        recomendaciones.push({
-                            nombre: 'Muestra 2 (M2)',
-                            descripcion: 'A los 15 días de vida.',
-                            fechaRecomendada: sumarDias(fechaNacimiento, 15)
-                        });
-                    }
+        let texto = `<h2>Recomendaciones:</h2><ul>`;
+        const fechasTomadas = {
+            M0: fechaM0.value,
+            M1: fechaM1.value,
+            M2: fechaM2.value,
+            M3: fechaM3.value
+        };
 
-                    if (tieneSindromeDown) {
-                        recomendaciones.push({
-                            nombre: 'Muestra 3 (M3)',
-                            descripcion: 'A los 28 días de vida.',
-                            fechaRecomendada: sumarDias(fechaNacimiento, 28)
-                        });
-                    }
-                } else if (unidadIngreso === 'uti_uci') {
-                    recomendaciones.push({
-                        nombre: 'Muestra 0 (M0)',
-                        descripcion: 'Al ingreso a la unidad (antes de medicamentos o nutrición parenteral).',
-                        fechaRecomendada: fechaNacimiento // al ingreso (día 0)
-                    });
+        const faltantes = [];
 
-                    recomendaciones.push({
-                        nombre: 'Muestra 1 (M1)',
-                        descripcion: 'Entre 40-48 horas de vida si no se tomó M0, o entre 48-72 horas si M0 fue tomada antes de 40 h.',
-                        fechaRecomendada: sumarDias(fechaNacimiento, 2) // 2 días como referencia
-                    });
+        if (unidadIngreso.value === 'cuidados_basicos') {
+            texto += `<li><strong>M1:</strong> Entre 40–48h → <em>${sumarDias(nac, 2)}</em></li>`;
+            if (eg < 37 || peso < 2500)
+                texto += `<li><strong>M2:</strong> A los 15 días → <em>${sumarDias(nac, 15)}</em></li>`;
+            if (sindromeDown.checked)
+                texto += `<li><strong>M3:</strong> A los 28 días → <em>${sumarDias(nac, 28)}</em></li>`;
+        } else {
+            texto += `<li><strong>M0:</strong> Al ingreso a la unidad.</li>`;
+            if (recibioM0.checked && m0Menos40h.checked)
+                texto += `<li><strong>M1:</strong> Tomar entre 48–72h → <em>${sumarDias(nac, 3)}</em></li>`;
+            else if (!recibioM0.checked)
+                texto += `<li><strong>M1:</strong> Entre 40–48h → <em>${sumarDias(nac, 2)}</em></li>`;
 
-                    if (edadGestacional < 37 || pesoNacimiento < 2500) {
-                        recomendaciones.push({
-                            nombre: 'Muestra 2 (M2)',
-                            descripcion: 'A los 28 días o al alta (lo que ocurra primero).',
-                            fechaRecomendada: sumarDias(fechaNacimiento, 28)
-                        });
-                    }
+            if (eg < 37 || peso < 2500 || transfusionPreviaM1.checked || pesquisaDudosaM1.checked)
+                texto += `<li><strong>M2:</strong> A los 28 días o al alta → <em>${sumarDias(nac, 28)}</em></li>`;
 
-                    if (tieneSindromeDown) {
-                        recomendaciones.push({
-                            nombre: 'Muestra 3b (Síndrome de Down)',
-                            descripcion: 'A los 28 días de vida si muestra previa fue antes de 21 días.',
-                            fechaRecomendada: sumarDias(fechaNacimiento, 28)
-                        });
-                    } else {
-                        recomendaciones.push({
-                            nombre: 'Muestra 3a (Casos excepcionales)',
-                            descripcion: 'A los 15 días si aplica alguna condición especial.',
-                            fechaRecomendada: sumarDias(fechaNacimiento, 15)
-                        });
-                    }
-                }
+            if (sindromeDown.checked)
+                texto += `<li><strong>M3b (SD):</strong> Si muestra previa fue <21d → <em>${sumarDias(nac, 28)}</em></li>`;
+            else if (muestraPreviaAltaMenos10Dias.checked || transfusionMenos7Dias.checked)
+                texto += `<li><strong>M3a:</strong> A los 15 días → <em>${sumarDias(nac, 15)}</em></li>`;
+        }
 
-                // Paso 2: Verificar qué muestras ya se tomaron (según fechas ingresadas)
-                const muestrasTomadas = [];
-                if (fechaM1Input.value) muestrasTomadas.push('M1');
-                if (fechaM2Input.value) muestrasTomadas.push('M2');
-                if (fechaM3Input.value) muestrasTomadas.push('M3');
+        texto += `</ul><hr><h3>Control de muestras realizadas:</h3>`;
 
-                // Paso 3: Construir mensaje con resultados y fechas recomendadas
-                let textoResultado = 'Recomendaciones de muestras y fechas aproximadas:\n\n';
+        for (const [muestra, fecha] of Object.entries(fechasTomadas)) {
+            texto += fecha
+                ? `<p>${muestra}: tomada el ${fecha}</p>`
+                : `<p>${muestra}: <span style="color:red;">pendiente</span></p>`;
+        }
 
-                recomendaciones.forEach(rec => {
-                    // Extraemos Muestra corta: M0, M1, M2, M3, M3a, M3b
-                    let muestraCorta = rec.nombre.match(/M[0-9ab]/);
-                    muestraCorta = muestraCorta ? muestraCorta[0].replace(/[ab]/, '') : '';
-
-                    const tomada = muestrasTomadas.includes(muestraCorta) ? ' (tomada)' : ' (pendiente)';
-                    textoResultado += `- ${rec.nombre}${tomada}:\n    Descripción: ${rec.descripcion}\n    Fecha recomendada: ${rec.fechaRecomendada}\n\n`;
-                });
-
-                // Paso 4: Mostrar resultado
-                resultadosDiv.textContent = textoResultado;
-            });
-        });
-    </script>
+        resultadosDiv.innerHTML = texto;
+    });
+});
+</script>
 </body>
 </html>
-
-
 
