@@ -216,6 +216,7 @@
         M3: document.getElementById("fechaM3"),
       };
 
+      // Mostrar/ocultar condicionales según unidad y checkbox
       const actualizarCondicionales = () => {
         const esUti = unidad.value === "uti_uci";
         condUti.style.display = esUti ? "block" : "none";
@@ -226,12 +227,16 @@
       recibioM0.addEventListener("change", actualizarCondicionales);
       actualizarCondicionales();
 
-      // Retorna la diferencia en días entre f2 y f1
-      const diasEntre = (f1, f2) =>
-        (new Date(f2).getTime() - new Date(f1).getTime()) / (1000 * 60 * 60 * 24);
+      // Diferencia en días entre dos fechas (f2 - f1)
+      const diasEntre = (f1, f2) => {
+        if (!f1 || !f2) return NaN;
+        const diff = (new Date(f2).getTime() - new Date(f1).getTime()) / (1000 * 60 * 60 * 24);
+        return diff;
+      };
 
-      // Suma días a fecha (yyyy-mm-dd)
+      // Sumar días a una fecha yyyy-mm-dd, devuelve yyyy-mm-dd
       const sumarDias = (fechaStr, dias) => {
+        if (!fechaStr) return "";
         const fecha = new Date(fechaStr);
         fecha.setDate(fecha.getDate() + dias);
         return fecha.toISOString().slice(0, 10);
@@ -249,145 +254,94 @@
         let muestras = [];
         let texto = "<h2>Recomendaciones para Tomas de Muestra:</h2>";
 
+        // Calcular edad en días para criterios especiales
+        const hoy = new Date().toISOString().slice(0, 10);
+        // No necesitamos fecha actual, sino diferencias entre fechas para decisiones
+
         if (unidad.value === "cuidados_basicos") {
           texto +=
             "<h3>Unidad: Puerperio/Puericultura/Cuidados Básicos</h3><ul>";
-          // M1: 40-48h = 1.7-2 días
+          // M1: 40-48h de vida (1.7 a 2 días), con al menos 24h de alimentación enteral (se asume siempre)
           muestras.push({
             id: "M1",
             min: 1.7,
             max: 2.0,
-            desc: "Entre 40–48h de vida",
+            desc: "Primera muestra entre 40–48 horas de vida",
             diaMin: 2,
             diaMax: 2,
           });
-          if (eg < 37 || pesoVal < 2500)
+          // M2: a los 15 días para pretérmino <37 sem o peso <2500 gr
+          if (eg < 37 || pesoVal < 2500) {
             muestras.push({
               id: "M2",
               min: 15,
-              max: 16,
-              desc: "A los 15 días de vida",
+              max: 15,
+              desc: "Segunda muestra a los 15 días de vida (pretérmino o bajo peso)",
               diaMin: 15,
               diaMax: 15,
             });
-          if (sindromeDown.checked)
+          }
+          // M3: a los 28 días para Síndrome de Down
+          if (sindromeDown.checked) {
             muestras.push({
               id: "M3",
               min: 28,
-              max: 29,
-              desc: "A los 28 días de vida",
+              max: 28,
+              desc: "Tercera muestra a los 28 días de vida (Síndrome de Down)",
               diaMin: 28,
               diaMax: 28,
             });
+          }
           texto += "</ul>";
         } else {
           texto += "<h3>Unidad: UTI-UCI</h3><ul>";
+          // M0: al ingreso idealmente antes de medicación (día 0)
           muestras.push({
             id: "M0",
             min: 0,
-            max: 0.1,
-            desc: "Al ingreso, antes de medicamentos",
+            max: 0,
+            desc: "Muestra al ingreso (antes de tratamientos endovenosos)",
             diaMin: 0,
             diaMax: 0,
           });
-          if (recibioM0.checked && m0Menos40h.checked)
-            muestras.push({
-              id: "M1",
-              min: 2,
-              max: 3,
-              desc: "Si M0 <40h, tomar nueva muestra 48–72h",
-              diaMin: 2,
-              diaMax: 3,
-            });
-          else if (!recibioM0.checked)
+
+          // M1: Si recibió M0 y esta fue <40h, nueva muestra entre 48-72h (2-3 días)
+          // Si NO recibió M0, primera muestra entre 40-48h (1.7-2 días)
+          if (recibioM0.checked) {
+            if (m0Menos40h.checked) {
+              muestras.push({
+                id: "M1",
+                min: 2,
+                max: 3,
+                desc: "Nueva muestra entre 48–72 horas tras M0 tomada < 40 horas",
+                diaMin: 2,
+                diaMax: 3,
+              });
+            }
+            // Si recibió M0 pero no fue <40h, no se toma M1 en este criterio
+          } else {
             muestras.push({
               id: "M1",
               min: 1.7,
               max: 2.0,
-              desc: "Si no se tomó M0, entre 40–48h",
+              desc: "Primera muestra entre 40–48 horas si no se tomó M0",
               diaMin: 2,
               diaMax: 2,
             });
+          }
+
+          // M2: A los 28 días o al alta para pretérmino, bajo peso, transfusión previa antes de M1, o pesquisa dudosa en M1
           if (
             eg < 37 ||
             pesoVal < 2500 ||
             transfusionPreviaM1.checked ||
             pesquisaDudosaM1.checked
-          )
+          ) {
             muestras.push({
               id: "M2",
               min: 28,
-              max: 30,
-              desc: "A los 28 días o al alta",
-              diaMin: 28,
-              diaMax: 28,
-            });
-          if (muestraPreviaAltaMenos10Dias.checked || transfusionMenos7Dias.checked)
-            muestras.push({
-              id: "M3a",
-              min: 14,
-              max: 15,
-              desc: "A los 14 días después del alta o última muestra",
-              diaMin: 14,
-              diaMax: 14,
-            });
-          texto += "</ul>";
-        }
+             
 
-        // Agregar texto con las fechas recomendadas
-        texto += "<h3>Fechas recomendadas para toma de muestra (desde fecha nacimiento):</h3><ul>";
-        muestras.forEach((m) => {
-          let fechaRec = sumarDias(nac, m.diaMin);
-          texto += `<li><b>${m.id}</b>: ${m.desc} — Fecha recomendada: <b>${fechaRec}</b></li>`;
-        });
-        texto += "</ul>";
-
-        // Mostrar tabla con fechas ingresadas y recomendadas
-        texto += `<h3>Resumen de muestras</h3><table>
-        <thead>
-          <tr>
-            <th>Muestra</th>
-            <th>Descripción</th>
-            <th>Fecha recomendada</th>
-            <th>Fecha tomada</th>
-            <th>Estado</th>
-          </tr>
-        </thead><tbody>`;
-
-        muestras.forEach((m) => {
-          const fechaRec = sumarDias(nac, m.diaMin);
-          const fechaTomada = fechasTomadas[m.id] ? fechasTomadas[m.id].value : "";
-          let estado = "";
-          if (!fechaTomada) {
-            estado = '<span class="pending">Pendiente</span>';
-          } else {
-            const diffDias = Math.abs(diasEntre(fechaRec, fechaTomada));
-            if (diffDias <= 3) {
-              estado = '<span class="ok">Correcta</span>';
-            } else {
-              estado = `<span class="warning">Desviación de ${diffDias.toFixed(
-                1
-              )} días</span>`;
-            }
-          }
-
-          texto += `<tr>
-            <td>${m.id}</td>
-            <td>${m.desc}</td>
-            <td>${fechaRec}</td>
-            <td>${fechaTomada || "-"}</td>
-            <td>${estado}</td>
-          </tr>`;
-        });
-
-        texto += "</tbody></table>";
-
-        resultadosDiv.innerHTML = texto;
-      });
-    });
-  </script>
-</body>
-</html>
-
+            
 
 
