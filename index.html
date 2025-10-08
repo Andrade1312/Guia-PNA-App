@@ -7,127 +7,122 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Guía PNA de Tomas de Muestra</h1>
-        <p style="text-align:center; font-style:italic;">Creado por: Eu. Carlos Andrade</p>
+<div class="container">
+    <h1>Guía PNA de Tomas de Muestra</h1>
+    <p style="text-align:center; font-style:italic;">Creado por: Eu. Carlos Andrade</p>
 
-        <div class="input-group">
-            <label for="unidadIngreso">Unidad de Ingreso:</label>
-            <select id="unidadIngreso">
-                <option value="cuidados_basicos">Puerperio/Puericultura/Cuidados Básicos</option>
-                <option value="uti_uci">UTI-UCI</option>
-            </select>
-        </div>
+    <div class="input-group">
+        <label for="unidadIngreso">Unidad de Ingreso:</label>
+        <select id="unidadIngreso">
+            <option value="cuidados_basicos">Puerperio/Puericultura/Cuidados Básicos</option>
+            <option value="uti_uci">UTI-UCI</option>
+        </select>
+    </div>
 
-        <div class="input-group">
-            <label for="edadGestacional">Edad Gestacional (semanas):</label>
-            <input type="number" id="edadGestacional" min="20" max="45" value="38">
-        </div>
+    <div class="input-group">
+        <label for="edadGestacional">Edad Gestacional (semanas):</label>
+        <input type="number" id="edadGestacional" min="20" max="45" value="38">
+    </div>
 
-        <div class="input-group">
-            <label for="pesoNacimiento">Peso de Nacimiento (gramos):</label>
-            <input type="number" id="pesoNacimiento" min="500" max="6000" value="3000">
-        </div>
+    <div class="input-group">
+        <label for="pesoNacimiento">Peso de Nacimiento (gramos):</label>
+        <input type="number" id="pesoNacimiento" min="500" max="6000" value="3000">
+    </div>
 
-        <!-- Condicionales UTI-UCI -->
-        <div id="condicionales-uti-uci" style="display:none;">
-            <div class="input-group checkbox-group">
-                <input type="checkbox" id="recibioM0">
-                <label for="recibioM0">¿Recibió Muestra 0 (M0)?</label>
-            </div>
-            <div class="input-group checkbox-group" id="m0-tiempo-group" style="display:none;">
-                <input type="checkbox" id="m0Menos40h">
-                <label for="m0Menos40h">¿Muestra M0 fue tomada &lt; 40h de vida?</label>
-            </div>
-            <div class="input-group checkbox-group">
-                <input type="checkbox" id="transfusionPreviaM1">
-                <label for="transfusionPreviaM1">¿Transfusión previa a M1?</label>
-            </div>
-            <div class="input-group checkbox-group">
-                <input type="checkbox" id="pesquisaDudosaM1">
-                <label for="pesquisaDudosaM1">¿Pesquisa dudosa en M1?</label>
-            </div>
-        </div>
-
-        <div id="condicionales-m3a" style="display:none;">
-            <div class="input-group checkbox-group">
-                <input type="checkbox" id="muestraPreviaAltaMenos10Dias">
-                <label for="muestraPreviaAltaMenos10Dias">¿Muestra previa al alta &lt; 10 días de vida?</label>
-            </div>
-            <div class="input-group checkbox-group">
-                <input type="checkbox" id="transfusionMenos7Dias">
-                <label for="transfusionMenos7Dias">¿Transfusión &lt; 7 días desde muestra previa?</label>
-            </div>
-        </div>
-
+    <!-- Condicionales UTI-UCI -->
+    <div id="condicionales-uti-uci" style="display:none;">
         <div class="input-group checkbox-group">
-            <input type="checkbox" id="sindromeDown">
-            <label for="sindromeDown">¿Diagnóstico de Síndrome de Down?</label>
+            <input type="checkbox" id="recibioM0">
+            <label for="recibioM0">¿Recibió Muestra 0 (M0)?</label>
         </div>
-
-        <div class="input-group">
-            <label for="fechaNacimiento">Fecha de Nacimiento:</label>
-            <input type="date" id="fechaNacimiento">
+        <div class="input-group checkbox-group" id="m0-tiempo-group" style="display:none;">
+            <input type="checkbox" id="m0Menos40h">
+            <label for="m0Menos40h">¿Muestra M0 fue tomada &lt; 40h de vida?</label>
         </div>
-
-        <h3>Fechas de toma de muestras realizadas (si ya las tienen)</h3>
-        <div class="input-group"><label for="fechaM0">Muestra 0 (M0):</label><input type="date" id="fechaM0"></div>
-        <div class="input-group"><label for="fechaM1">Muestra 1 (M1):</label><input type="date" id="fechaM1"></div>
-        <div class="input-group"><label for="fechaM2">Muestra 2 (M2):</label><input type="date" id="fechaM2"></div>
-        <div class="input-group"><label for="fechaM3">Muestra 3 (M3):</label><input type="date" id="fechaM3"></div>
-
-        <div class="input-group">
-            <button id="calcularBtn">Calcular Recomendación</button>
+        <div class="input-group checkbox-group">
+            <input type="checkbox" id="transfusionPreviaM1">
+            <label for="transfusionPreviaM1">¿Transfusión previa a M1?</label>
         </div>
-
-        <div class="result-box" id="resultados">
-            <p>Introduce los datos y haz clic en "Calcular Recomendación".</p>
+        <div class="input-group checkbox-group">
+            <input type="checkbox" id="pesquisaDudosaM1">
+            <label for="pesquisaDudosaM1">¿Pesquisa dudosa en M1?</label>
         </div>
     </div>
 
+    <div id="condicionales-m3a" style="display:none;">
+        <div class="input-group checkbox-group">
+            <input type="checkbox" id="muestraPreviaAltaMenos10Dias">
+            <label for="muestraPreviaAltaMenos10Dias">¿Muestra previa al alta &lt; 10 días de vida?</label>
+        </div>
+        <div class="input-group checkbox-group">
+            <input type="checkbox" id="transfusionMenos7Dias">
+            <label for="transfusionMenos7Dias">¿Transfusión &lt; 7 días desde muestra previa?</label>
+        </div>
+    </div>
+
+    <div class="input-group checkbox-group">
+        <input type="checkbox" id="sindromeDown">
+        <label for="sindromeDown">¿Diagnóstico de Síndrome de Down?</label>
+    </div>
+
+    <div class="input-group">
+        <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+        <input type="date" id="fechaNacimiento">
+    </div>
+
+    <h3>Fechas de toma de muestras realizadas (si ya las tienen)</h3>
+    <div class="input-group"><label for="fechaM0">Muestra 0 (M0):</label><input type="date" id="fechaM0"></div>
+    <div class="input-group"><label for="fechaM1">Muestra 1 (M1):</label><input type="date" id="fechaM1"></div>
+    <div class="input-group"><label for="fechaM2">Muestra 2 (M2):</label><input type="date" id="fechaM2"></div>
+    <div class="input-group"><label for="fechaM3">Muestra 3 (M3):</label><input type="date" id="fechaM3"></div>
+
+    <div class="input-group">
+        <button id="calcularBtn">Calcular Recomendación</button>
+    </div>
+
+    <div class="result-box" id="resultados">
+        <p>Introduce los datos y haz clic en "Calcular Recomendación".</p>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Referencias ---
     const unidadIngreso = document.getElementById('unidadIngreso');
     const edadGestacional = document.getElementById('edadGestacional');
     const pesoNacimiento = document.getElementById('pesoNacimiento');
     const sindromeDown = document.getElementById('sindromeDown');
-
     const condUtiUci = document.getElementById('condicionales-uti-uci');
+    const condM3a = document.getElementById('condicionales-m3a');
     const recibioM0 = document.getElementById('recibioM0');
     const m0TiempoGroup = document.getElementById('m0-tiempo-group');
     const m0Menos40h = document.getElementById('m0Menos40h');
     const transfusionPreviaM1 = document.getElementById('transfusionPreviaM1');
     const pesquisaDudosaM1 = document.getElementById('pesquisaDudosaM1');
-    const condM3a = document.getElementById('condicionales-m3a');
     const muestraPreviaAltaMenos10Dias = document.getElementById('muestraPreviaAltaMenos10Dias');
     const transfusionMenos7Dias = document.getElementById('transfusionMenos7Dias');
-
     const fechaNacimiento = document.getElementById('fechaNacimiento');
-    const fechaM0 = document.getElementById('fechaM0');
-    const fechaM1 = document.getElementById('fechaM1');
-    const fechaM2 = document.getElementById('fechaM2');
-    const fechaM3 = document.getElementById('fechaM3');
-
     const resultadosDiv = document.getElementById('resultados');
     const calcularBtn = document.getElementById('calcularBtn');
 
-    // --- Mostrar/Ocultar dinámico ---
+    const fechasInputs = {
+        M0: document.getElementById('fechaM0'),
+        M1: document.getElementById('fechaM1'),
+        M2: document.getElementById('fechaM2'),
+        M3: document.getElementById('fechaM3')
+    };
+
+    // Mostrar / ocultar condicionales según unidad
     function actualizarCampos() {
-        if (unidadIngreso.value === 'uti_uci') {
-            condUtiUci.style.display = 'block';
-            condM3a.style.display = 'block';
-            m0TiempoGroup.style.display = recibioM0.checked ? 'block' : 'none';
-        } else {
-            condUtiUci.style.display = 'none';
-            condM3a.style.display = 'none';
-        }
+        const esUti = unidadIngreso.value === 'uti_uci';
+        condUtiUci.style.display = esUti ? 'block' : 'none';
+        condM3a.style.display = esUti ? 'block' : 'none';
+        m0TiempoGroup.style.display = esUti && recibioM0.checked ? 'block' : 'none';
     }
     unidadIngreso.addEventListener('change', actualizarCampos);
     recibioM0.addEventListener('change', actualizarCampos);
     actualizarCampos();
 
-    // --- Utilidad: sumar días ---
+    // Función auxiliar para sumar días
     const sumarDias = (fechaStr, dias) => {
         if (!fechaStr) return null;
         const f = new Date(fechaStr);
@@ -135,55 +130,61 @@ document.addEventListener('DOMContentLoaded', () => {
         return f.toISOString().split('T')[0];
     };
 
-    // --- Cálculo principal ---
+    // Calcular recomendaciones
     calcularBtn.addEventListener('click', () => {
         const eg = parseInt(edadGestacional.value);
         const peso = parseInt(pesoNacimiento.value);
         const nac = fechaNacimiento.value;
+
         if (!nac || isNaN(eg) || isNaN(peso)) {
             resultadosDiv.innerHTML = `<p class="error">Por favor, completa Edad Gestacional, Peso y Fecha de Nacimiento.</p>`;
             return;
         }
 
         let texto = `<h2>Recomendaciones:</h2><ul>`;
-        const fechasTomadas = {
-            M0: fechaM0.value,
-            M1: fechaM1.value,
-            M2: fechaM2.value,
-            M3: fechaM3.value
-        };
+        const muestrasRequeridas = [];
 
-        const faltantes = [];
-
+        // Cálculo según unidad
         if (unidadIngreso.value === 'cuidados_basicos') {
-            texto += `<li><strong>M1:</strong> Entre 40–48h → <em>${sumarDias(nac, 2)}</em></li>`;
+            muestrasRequeridas.push({id: 'M1', razon: 'Entre 40–48h de vida', fecha: sumarDias(nac, 2)});
             if (eg < 37 || peso < 2500)
-                texto += `<li><strong>M2:</strong> A los 15 días → <em>${sumarDias(nac, 15)}</em></li>`;
+                muestrasRequeridas.push({id: 'M2', razon: 'A los 15 días por ser pretérmino o bajo peso', fecha: sumarDias(nac, 15)});
             if (sindromeDown.checked)
-                texto += `<li><strong>M3:</strong> A los 28 días → <em>${sumarDias(nac, 28)}</em></li>`;
+                muestrasRequeridas.push({id: 'M3', razon: 'A los 28 días por Síndrome de Down', fecha: sumarDias(nac, 28)});
         } else {
-            texto += `<li><strong>M0:</strong> Al ingreso a la unidad.</li>`;
+            muestrasRequeridas.push({id: 'M0', razon: 'Al ingreso a la unidad (antes de medicamentos)', fecha: nac});
             if (recibioM0.checked && m0Menos40h.checked)
-                texto += `<li><strong>M1:</strong> Tomar entre 48–72h → <em>${sumarDias(nac, 3)}</em></li>`;
+                muestrasRequeridas.push({id: 'M1', razon: 'Tomar entre 48–72h ya que M0 fue <40h', fecha: sumarDias(nac, 3)});
             else if (!recibioM0.checked)
-                texto += `<li><strong>M1:</strong> Entre 40–48h → <em>${sumarDias(nac, 2)}</em></li>`;
-
+                muestrasRequeridas.push({id: 'M1', razon: 'Entre 40–48h si no se tomó M0', fecha: sumarDias(nac, 2)});
             if (eg < 37 || peso < 2500 || transfusionPreviaM1.checked || pesquisaDudosaM1.checked)
-                texto += `<li><strong>M2:</strong> A los 28 días o al alta → <em>${sumarDias(nac, 28)}</em></li>`;
-
+                muestrasRequeridas.push({id: 'M2', razon: 'A los 28 días (pretérmino/bajo peso o transfusión/pesquisa dudosa)', fecha: sumarDias(nac, 28)});
             if (sindromeDown.checked)
-                texto += `<li><strong>M3b (SD):</strong> Si muestra previa fue <21d → <em>${sumarDias(nac, 28)}</em></li>`;
+                muestrasRequeridas.push({id: 'M3', razon: 'A los 28 días (Síndrome de Down)', fecha: sumarDias(nac, 28)});
             else if (muestraPreviaAltaMenos10Dias.checked || transfusionMenos7Dias.checked)
-                texto += `<li><strong>M3a:</strong> A los 15 días → <em>${sumarDias(nac, 15)}</em></li>`;
+                muestrasRequeridas.push({id: 'M3', razon: 'A los 15 días por muestra precoz o transfusión reciente', fecha: sumarDias(nac, 15)});
         }
+
+        muestrasRequeridas.forEach(m => {
+            texto += `<li><strong>${m.id}:</strong> ${m.razon} → <em>${m.fecha}</em></li>`;
+        });
 
         texto += `</ul><hr><h3>Control de muestras realizadas:</h3>`;
 
-        for (const [muestra, fecha] of Object.entries(fechasTomadas)) {
-            texto += fecha
-                ? `<p>${muestra}: tomada el ${fecha}</p>`
-                : `<p>${muestra}: <span style="color:red;">pendiente</span></p>`;
-        }
+        let todasTomadas = true;
+        muestrasRequeridas.forEach(m => {
+            const fechaTomada = fechasInputs[m.id].value;
+            if (fechaTomada) {
+                texto += `<p>✅ <strong>${m.id}</strong>: tomada el ${fechaTomada} — ${m.razon}.</p>`;
+            } else {
+                todasTomadas = false;
+                texto += `<p>⚠️ <strong>${m.id}</strong>: <span style="color:red;">pendiente</span> — ${m.razon} (recomendada: ${m.fecha}).</p>`;
+            }
+        });
+
+        texto += todasTomadas
+            ? `<p style="color:green; font-weight:bold;">✅ Todas las muestras requeridas fueron tomadas.</p>`
+            : `<p style="color:red; font-weight:bold;">⚠️ Aún faltan muestras por tomar.</p>`;
 
         resultadosDiv.innerHTML = texto;
     });
@@ -191,4 +192,5 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
 
