@@ -76,6 +76,7 @@
     border: 1px solid #ccc;
     padding: 10px;
     text-align: center;
+    vertical-align: middle;
   }
   th {
     background: #0056b3;
@@ -92,6 +93,20 @@
   .warning {
     color: orange;
     font-weight: bold;
+  }
+  .alert-icon {
+    color: red;
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-right: 5px;
+  }
+  .alert-text {
+    color: red;
+    font-weight: 700;
+  }
+  .info-text {
+    margin-bottom: 15px;
+    font-size: 1.1em;
   }
 </style>
 </head>
@@ -261,10 +276,13 @@
         return diasEntre(fechaNacimiento.value, fecha);
       };
 
+      // Icono alerta
+      const iconAlerta = "⚠️";
+
       document.getElementById("calcularBtn").addEventListener("click", () => {
         const error = validarInputs();
         if (error) {
-          resultadosDiv.innerHTML = `<p class="error">⚠️ ${error}</p>`;
+          resultadosDiv.innerHTML = `<p class="alert-text">${iconAlerta} ${error}</p>`;
           return;
         }
 
@@ -273,20 +291,17 @@
         const nac = fechaNacimiento.value;
         const esUti = unidad.value === "uti_uci";
 
-        // Reiniciar array de muestras recomendadas
         let muestras = [];
 
         // ---- Lógica según Unidad ----
         if (!esUti) {
-          // a) Puerperio/Puericultura/Cuidados Básicos
-          // M1: 40-48h (1.7 - 2 días) - siempre
+          // Puerperio/Puericultura/Cuidados Básicos
           muestras.push({
             id: "M1",
             descripcion: "Primera muestra entre 40–48 h de vida",
-            diaRecomendado: 2, // 48h
+            diaRecomendado: 2,
           });
 
-          // M2: a los 15 días si pretermino o bajo peso
           if (eg < 37 || pesoVal < 2500) {
             muestras.push({
               id: "M2",
@@ -295,163 +310,25 @@
             });
           }
 
-          // M3: a los 28 días si Síndrome de Down
+          // Solo si Síndrome de Down
           if (sindromeDown.checked) {
             muestras.push({
-              id: "M3",
+              id: "M3b",
               descripcion: "Tercera muestra a los 28 días (Síndrome de Down)",
               diaRecomendado: 28,
             });
           }
-
         } else {
-          // b) UTI-UCI
-
-          // M0: muestra al ingreso (día 0)
+          // UTI-UCI
           muestras.push({
             id: "M0",
             descripcion: "Muestra al ingreso antes de tratamientos",
             diaRecomendado: 0,
           });
 
-          // M1:
-          // Si recibió M0 y esta fue < 40h, nueva muestra 48-72h
           if (recibioM0.checked && m0Menos40h.checked) {
             muestras.push({
               id: "M1",
-              descripcion: "Nueva muestra entre 48 y 72 h si M0 fue <40h de vida",
-              diaRecomendado: 3, // para mostrar fecha tope (72h = 3 días)
-              diaMin: 2, // 48h
-            });
-          }
-          // Si no recibió M0, tomar M1 entre 40-48h (2 días)
-          else if (!recibioM0.checked) {
-            muestras.push({
-              id: "M1",
-              descripcion: "Muestra entre 40–48 h (si no se tomó M0)",
-              diaRecomendado: 2,
-            });
-          }
-
-          // M2:
-          // Si transfusión previa a M1 o pesquisa dudosa, nueva muestra a los 15 días desde M1
-          if (
-            (transfusionPreviaM1.checked || pesquisaDudosaM1.checked) &&
-            fechasTomadas.M1.value
-          ) {
-            muestras.push({
-              id: "M2",
-              descripcion: "Muestra a los 15 días desde M1 por transfusión o pesquisa dudosa",
-              diaRecomendado:
-                edadEnDias(fechasTomadas.M1.value) + 15,
-            });
-          } else {
-            // Si no, M2 a los 15 días de vida si pretermino o bajo peso
-            if (eg < 37 || pesoVal < 2500) {
-              muestras.push({
-                id: "M2",
-                descripcion: "Muestra a los 15 días de vida (pretérmino o bajo peso)",
-                diaRecomendado: 15,
-              });
-            }
-          }
-
-          // M3:
-          // Si muestra previa antes del alta es menor a 10 días y transfusión < 7 días desde muestra, repetir muestra (M3a)
-          if (
-            muestraPreviaAltaMenos10Dias.checked &&
-            transfusionMenos7Dias.checked &&
-            fechasTomadas.M2.value
-          ) {
-            muestras.push({
-              id: "M3a",
-              descripcion:
-                "Repetir muestra (M3a) por transfusión reciente y muestra previa < 10 días",
-              diaRecomendado:
-                edadEnDias(fechasTomadas.M2.value) + 7,
-            });
-          } else {
-            // M3b: muestra al alta (28 días o antes de alta hospitalaria)
-            muestras.push({
-              id: "M3b",
-              descripcion: "Muestra al alta (28 días o antes de alta hospitalaria)",
-              diaRecomendado: 28,
-            });
-          }
-        }
-
-        // ---- Mostrar resultados ----
-        // Para cada muestra:
-        // - Mostrar fecha recomendada según fecha nacimiento + días recomendados
-        // - Mostrar fecha tomada (si existe)
-        // - Estado:
-        //   * Pendiente: si no hay fecha tomada y fecha recomendada <= hoy
-        //   * Correcta: si fecha tomada dentro de ventana +/- 1 día de la recomendada
-        //   * Desviada: si fecha tomada pero fuera de ventana +/- 1 día
-
-        const hoy = new Date();
-        const hoyStr = hoy.toISOString().slice(0, 10);
-
-        let html = `<table>
-          <thead>
-            <tr>
-              <th>Muestra</th>
-              <th>Descripción</th>
-              <th>Día recomendado desde nacimiento</th>
-              <th>Fecha recomendada</th>
-              <th>Fecha tomada</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody>`;
-
-        muestras.forEach((m) => {
-          const fechaRec = sumarDias(nac, m.diaRecomendado);
-          const fechaTomada = fechasTomadas[m.id]?.value || "-";
-
-          let estado = "Pendiente";
-          let claseEstado = "pending";
-
-          if (fechaTomada && fechaTomada !== "-") {
-            const dif = Math.abs(edadEnDias(fechaTomada) - m.diaRecomendado);
-            if (dif <= 1) {
-              estado = "Correcta";
-              claseEstado = "ok";
-            } else {
-              estado = "Desviada";
-              claseEstado = "warning";
-            }
-          } else {
-            // Si no fecha tomada y fecha recomendada en pasado o hoy, pendiente
-            if (fechaRec <= hoyStr) {
-              estado = "Pendiente";
-              claseEstado = "pending";
-            } else {
-              estado = "Programada";
-              claseEstado = "";
-            }
-          }
-
-          html += `<tr>
-            <td>${m.id}</td>
-            <td>${m.descripcion}</td>
-            <td>${m.diaRecomendado}</td>
-            <td>${fechaRec || "-"}</td>
-            <td>${fechaTomada}</td>
-            <td class="${claseEstado}">${estado}</td>
-          </tr>`;
-        });
-
-        html += "</tbody></table>";
-
-        resultadosDiv.innerHTML = html;
-      });
-    });
-  </script>
-</body>
-</html>
-
-
-
+              descripcion: "Nueva muestra entre 
 
 
