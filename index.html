@@ -56,7 +56,6 @@
     <label><input type="checkbox" id="muestraPreviaAltaMenos10Dias" /> Muestra previa al alta tomada antes de 10 días</label>
     <label><input type="checkbox" id="transfusionMenos7Dias" /> Transfusión en menos de 7 días desde muestra previa</label>
     <label><input type="checkbox" id="sindromeDown" /> Diagnóstico o sospecha de Síndrome de Down</label>
-    <label><input type="checkbox" id="muestraPreviaAltaMenos21Dias" /> Muestra previa al alta tomada antes de 21 días</label>
   </fieldset>
 
   <fieldset style="margin-top: 15px;">
@@ -85,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const fechaNacimientoInput = document.getElementById("fechaNacimiento");
 
   function actualizarVisibilidadCampos() {
+    // Mostrar el checkbox M0 < 40h solo si recibioM0 está marcado y la unidad es UTI-UCI
     if (unidadIngresoSelect.value === "uti_uci" && recibioM0Checkbox.checked) {
       m0TiempoGroupDiv.style.display = "block";
     } else {
@@ -128,16 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const fechaNacimiento = new Date(fechaNacimientoInput.value);
-
-    // Fechas muestras existentes
-    const fechaM0 = getFechaMuestra("M0");
-    const fechaM1 = getFechaMuestra("M1");
-    const fechaM2 = getFechaMuestra("M2");
-    const fechaM3a = getFechaMuestra("M3a");
-    const fechaM3b = getFechaMuestra("M3b");
-
-    // Chequeos condicionales
+    // Leer checkboxes
     const recibioM0 = recibioM0Checkbox.checked;
     const m0Menos40h = m0Menos40hCheckbox.checked;
     const transfusionPreviaM1 = document.getElementById("transfusionPreviaM1").checked;
@@ -145,103 +136,222 @@ document.addEventListener("DOMContentLoaded", () => {
     const muestraPreviaAltaMenos10Dias = document.getElementById("muestraPreviaAltaMenos10Dias").checked;
     const transfusionMenos7Dias = document.getElementById("transfusionMenos7Dias").checked;
     const sindromeDown = document.getElementById("sindromeDown").checked;
-    const muestraPreviaAltaMenos21Dias = document.getElementById("muestraPreviaAltaMenos21Dias").checked;
 
+    // Definir muestras que aplican con reglas del algoritmo y descripción y rangos (min/max días)
     let muestras = [];
 
-    // M0: 48 a 72 horas (recomendado)
-    if (!fechaM0) {
-      muestras.push({
-        id: "M0",
-        diaMin: 2,
-        diaMax: 3,
-        desc: "Muestra 0 recomendada entre 48 y 72 horas de vida.",
-        motivo: "Muestra inicial estándar."
-      });
-    } else {
-      // chequeo si está dentro de rango recomendado
-      const diasDesdeNacimientoM0 = diffDias(fechaNacimiento, fechaM0);
-      if (diasDesdeNacimientoM0 < 2 || diasDesdeNacimientoM0 > 3) {
-        muestras.push({
-          id: "M0",
-          diaMin: 2,
-          diaMax: 3,
-          desc: `Muestra 0 tomada el ${fechaM0.toISOString().slice(0,10)}, fuera del rango recomendado (48-72h).`,
-          motivo: "Corregir tiempo de toma de M0."
-        });
-      }
-    }
-
-    // M1: 7 a 10 días
-    if (!fechaM1) {
+    if (unidad === "cuidados_basicos") {
+      // M1 siempre, entre 40-48h (2-2 días)
       muestras.push({
         id: "M1",
-        diaMin: 7,
-        diaMax: 10,
-        desc: "Muestra 1 recomendada entre 7 y 10 días de vida.",
-        motivo: "Muestra de seguimiento estándar."
+        diaMin: 2,
+        diaMax: 2,
+        desc: "Muestra 1: Primera muestra entre 40-48 horas (2 días)",
+        motivo: "Recién nacidos sanos hospitalizados en cuidados básicos."
       });
-    }
-
-    // M2: 21 días (solo si transfusión previa a M1)
-    if (transfusionPreviaM1) {
-      if (!fechaM2) {
+      // M2 solo si pretérmino o bajo peso
+      if (eg < 37 || pesoVal < 2500) {
         muestras.push({
           id: "M2",
-          diaMin: 21,
-          diaMax: 21,
-          desc: "Muestra 2 recomendada a los 21 días de vida.",
-          motivo: "Transfusión previa a M1 requiere M2."
+          diaMin: 15,
+          diaMax: 15,
+          desc: "Muestra 2: A los 15 días (pretérmino y/o bajo peso)",
+          motivo: "Recién nacido pretérmino (<37 semanas) o bajo peso (<2500 g)."
         });
       }
-    }
+      // M3 solo si Síndrome de Down
+      if (sindromeDown) {
+        muestras.push({
+          id: "M3",
+          diaMin: 28,
+          diaMax: 30,
+          desc: "Muestra 3: A los 28-30 días (Síndrome de Down)",
+          motivo: "Recién nacido con diagnóstico o sospecha de Síndrome de Down."
+        });
+      }
+    } else if (unidad === "uti_uci") {
+      // M0 siempre
+      muestras.push({
+        id: "M0",
+        diaMin: 0,
+        diaMax: 0,
+        desc: "Muestra 0: Al ingreso, antes de medicamentos",
+        motivo: "Todos los recién nacidos en UTI-UCI requieren muestra al ingreso."
+      });
 
-    // M3a: Si muestra previa al alta tomada antes de 10 días y bajo peso, pretérmino o transfusión reciente menos de 7 días
-    if (muestraPreviaAltaMenos10Dias && (pesoVal < 2500 || eg < 37 || transfusionMenos7Dias)) {
-      if (!fechaM3a) {
+      // M1 depende de si recibió M0 y si fue antes de 40h
+      if (recibioM0 && m0Menos40h) {
+        muestras.push({
+          id: "M1",
+          diaMin: 2,
+          diaMax: 3,
+          desc: "Muestra 1: Nueva muestra 48-72 horas (si M0 < 40h)",
+          motivo: "Recién nacido con M0 tomada antes de 40 horas."
+        });
+      } else {
+        // Si no recibió M0 o fue >40h, entonces M1 no aplica porque es primera toma?
+        // Por algoritmo, todo recién nacido en UCI debe tener M0, pero si no recibio,
+        // entendemos que M1 es primera toma?
+        // Para seguridad, agregamos M1 también si NO recibió M0:
+        if (!recibioM0) {
+          muestras.push({
+            id: "M1",
+            diaMin: 2,
+            diaMax: 3,
+            desc: "Muestra 1: Primera muestra entre 48-72 horas",
+            motivo: "Recién nacido sin muestra 0 recibida."
+          });
+        }
+      }
+
+      // M2 si pretérmino o bajo peso o transfusión o pesquisa dudosa
+      if (eg < 37 || pesoVal < 2500 || transfusionPreviaM1 || pesquisaDudosaM1) {
+        muestras.push({
+          id: "M2",
+          diaMin: 28,
+          diaMax: 30,
+          desc: "Muestra 2: Nueva muestra a los 28 días o al alta",
+          motivo: "Pretérmino, bajo peso, transfusión previa a M1 o pesquisa dudosa en M1."
+        });
+      }
+
+      // M3a: Si muestra previa al alta tomada antes de 10 días y bajo peso o pretérmino o transfusión menos 7 días
+      if (muestraPreviaAltaMenos10Dias && (pesoVal < 2500 || eg < 37 || transfusionMenos7Dias)) {
         muestras.push({
           id: "M3a",
           diaMin: 15,
           diaMax: 15,
-          desc: "Muestra 3a recomendada a los 15 días de vida.",
-          motivo: "Muestra previa al alta antes de 10 días con bajo peso, pretérmino o transfusión reciente."
+          desc: "Muestra 3a: Nueva muestra a los 15 días",
+          motivo: "Muestra previa al alta antes de 10 días y bajo peso, pretérmino o transfusión reciente."
         });
       }
-    }
 
-    // M3b: Síndrome de Down con muestra previa al alta antes de 21 días
-    if (sindromeDown && muestraPreviaAltaMenos21Dias) {
-      if (!fechaM3b) {
+      // M3b: Síndrome de Down con muestra previa al alta antes de 21 días
+      if (sindromeDown && muestraPreviaAltaMenos10Dias) {
         muestras.push({
           id: "M3b",
           diaMin: 21,
           diaMax: 25,
-          desc: "Muestra 3b recomendada entre 21 y 25 días de vida.",
+          desc: "Muestra 3b: Nueva muestra después de muestra previa al alta <21 días",
           motivo: "Síndrome de Down con muestra previa al alta antes de 21 días."
         });
       }
     }
 
-    // Mostrar resumen con tabla y mensajes
-    if (muestras.length === 0) {
-      resultadosDiv.innerHTML = '<p class="tomada">No hay muestras pendientes o recomendaciones nuevas.</p>';
-      return;
+    // Fecha nacimiento
+    const fechaNac = new Date(fechaNacimientoInput.value);
+
+    // Fechas ingresadas por usuario para muestras
+    const fechasUsuario = {
+      M0: getFechaMuestra("M0"),
+      M1: getFechaMuestra("M1"),
+      M2: getFechaMuestra("M2"),
+      M3a: getFechaMuestra("M3a"),
+      M3b: getFechaMuestra("M3b"),
+      M3: null // En cuidados básicos no distingue a/b, en uti_uci no hay M3 común
+    };
+
+    // En cuidados basicos, si aplicó M3, asignar fecha de M3b = M3 para unificar
+    if (unidad === "cuidados_basicos" && sindromeDown) {
+      fechasUsuario.M3 = fechasUsuario.M3b || null;
     }
 
-    // Crear tabla de recomendaciones
-    let html = '<table><thead><tr><th>Muestra</th><th>Descripción</th><th>Motivo</th></tr></thead><tbody>';
+    // Para resumen texto y tabla:
+    let resumen = "";
+    let tablaHTML = `<table>
+      <thead><tr><th>Muestra</th><th>Fecha recomendada</th><th>Fecha tomada</th><th>Estado</th><th>Observación</th></tr></thead><tbody>`;
 
+    // Para trackear muestras tomadas que NO corresponden según algoritmo
+    let muestrasNoCorresponden = [];
+
+    // Para trackear si todas las muestras requeridas fueron tomadas
+    let todasTomadas = true;
+
+    // Procesar cada muestra que aplica según algoritmo
     muestras.forEach(m => {
-      html += `<tr>
+      // Calcular fechas recomendadas (entre día mínimo y máximo)
+      const fechaRecMin = new Date(fechaNac);
+      fechaRecMin.setDate(fechaRecMin.getDate() + m.diaMin);
+      const fechaRecMax = new Date(fechaNac);
+      fechaRecMax.setDate(fechaRecMax.getDate() + m.diaMax);
+
+      // Obtener fecha tomada si existe
+      let fechaTomada = fechasUsuario[m.id];
+      // Para M3 en cuidados basicos, puede estar en fechasUsuario.M3 o M3b
+      if (m.id === "M3" && !fechaTomada) {
+        fechaTomada = fechasUsuario.M3b;
+      }
+
+      // Estado y observaciones
+      let estado = "";
+      let observacion = "";
+
+      if (fechaTomada) {
+        // Fecha tomada: verificar si está dentro del rango recomendado
+        if (fechaTomada >= fechaRecMin && fechaTomada <= fechaRecMax) {
+          estado = `<span class="tomada">Tomada dentro del rango recomendado</span>`;
+          observacion = `Se debió tomar porque ${m.motivo}`;
+        } else {
+          estado = `<span class="advertencia">Tomada fuera del rango recomendado</span>`;
+          const diasDiferencia = diffDias(fechaRecMin, fechaTomada);
+          let cuando = "";
+          if (diasDiferencia < 0) {
+            cuando = `se tomó ${Math.abs(diasDiferencia)} día(s) antes de lo recomendado`;
+          } else {
+            cuando = `se tomó ${diasDiferencia} día(s) después de lo recomendado`;
+          }
+          observacion = `Se debió tomar porque ${m.motivo}. Atención: ${cuando}.`;
+        }
+        resumen += `Muestra ${m.id} tomada el ${fechaTomada.toISOString().slice(0,10)}, ${estado.replace(/<[^>]*>/g,"")}. ${observacion} <br>`;
+      } else {
+        estado = `<span class="pendiente">Pendiente</span>`;
+        observacion = `Debe tomarse porque ${m.motivo}`;
+        resumen += `Muestra ${m.id} está pendiente. ${observacion} <br>`;
+        todasTomadas = false;
+      }
+
+      tablaHTML += `<tr>
         <td>${m.id}</td>
-        <td>${m.desc}</td>
-        <td>${m.motivo}</td>
+        <td>${fechaRecMin.toISOString().slice(0,10)} - ${fechaRecMax.toISOString().slice(0,10)}</td>
+        <td>${fechaTomada ? fechaTomada.toISOString().slice(0,10) : "-"}</td>
+        <td>${estado}</td>
+        <td>${observacion}</td>
       </tr>`;
     });
 
-    html += '</tbody></table>';
+    // Detectar muestras que usuario ingresó pero no corresponden según algoritmo (muestra tomada no requerida)
+    ["M0", "M1", "M2", "M3a", "M3b", "M3"].forEach(mId => {
+      if (fechasUsuario[mId]) {
+        const mAlg = muestras.find(m => m.id === mId) 
+          || (mId === "M3" && unidad==="cuidados_basicos" && sindromeDown)
+          || (mId === "M3a" && unidad==="uti_uci")
+          || (mId === "M3b" && unidad==="uti_uci" && sindromeDown);
+        if (!mAlg) {
+          // Muestra tomada pero no corresponde
+          const fechaTomada = fechasUsuario[mId];
+          resumen += `<br><strong>Nota:</strong> Muestra ${mId} tomada el ${fechaTomada.toISOString().slice(0,10)}, pero no cumple criterio de algoritmo para ser tomada.`;
+          tablaHTML += `<tr>
+            <td>${mId}</td>
+            <td>-</td>
+            <td>${fechaTomada.toISOString().slice(0,10)}</td>
+            <td><span class="advertencia">No corresponde según algoritmo</span></td>
+            <td>Muestra tomada según usuario pero sin indicación según criterios.</td>
+          </tr>`;
+          todasTomadas = false; // no cambia el flag porque es extra pero se informa
+        }
+      }
+    });
 
-    resultadosDiv.innerHTML = html;
+    tablaHTML += "</tbody></table>";
+
+    // Mensaje final
+    if (todasTomadas && muestras.length > 0) {
+      resumen += `<br><strong>✅ Todas las muestras requeridas fueron tomadas según algoritmo.</strong>`;
+    } else if (muestras.length === 0) {
+      resumen += `<br><strong>No se requieren muestras según el algoritmo para estos datos.</strong>`;
+    }
+
+    resultadosDiv.innerHTML = resumen + tablaHTML;
   }
 
   calcularBtn.addEventListener("click", calcularRecomendacion);
@@ -250,4 +360,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
