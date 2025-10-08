@@ -1,91 +1,94 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guía PNA de Tomas de Muestra</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            font-family: "Segoe UI", sans-serif;
-            background: #f8f9fa;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            background: white;
-            max-width: 850px;
-            margin: 30px auto;
-            padding: 25px 35px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #0056b3;
-        }
-        h3 {
-            margin-top: 30px;
-            color: #0056b3;
-        }
-        .input-group {
-            margin: 12px 0;
-        }
-        label {
-            font-weight: 600;
-        }
-        select, input[type="number"], input[type="date"] {
-            width: 100%;
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        button {
-            background: #007bff;
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        .result-box {
-            margin-top: 20px;
-            padding: 20px;
-            background: #f0f8ff;
-            border-radius: 8px;
-        }
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: center;
-        }
-        th {
-            background-color: #0056b3;
-            color: white;
-        }
-        .ok { color: green; font-weight: bold; }
-        .pending { color: red; font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía PNA de Tomas de Muestra</title>
+<style>
+    body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f7f9fc;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
+    .container {
+        background: white;
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 25px 35px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+        text-align: center;
+        color: #0056b3;
+    }
+    p.autor {
+        text-align: center;
+        font-style: italic;
+        color: #444;
+    }
+    .input-group {
+        margin: 12px 0;
+    }
+    label {
+        font-weight: 600;
+    }
+    select, input[type="number"], input[type="date"] {
+        width: 100%;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+    button {
+        background: #007bff;
+        border: none;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button:hover {
+        background: #0056b3;
+    }
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .result-box {
+        margin-top: 25px;
+        background: #eef6ff;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    h2 {
+        color: #0056b3;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+    }
+    th {
+        background: #0056b3;
+        color: white;
+    }
+    .ok { color: green; font-weight: bold; }
+    .pending { color: red; font-weight: bold; }
+</style>
 </head>
 <body>
 <div class="container">
     <h1>Guía PNA de Tomas de Muestra</h1>
-    <p style="text-align:center; font-style:italic;">Creado por: Eu. Carlos Andrade</p>
+    <p class="autor">Creado por: Eu. Carlos Andrade</p>
 
     <div class="input-group">
         <label for="unidadIngreso">Unidad de Ingreso:</label>
@@ -163,14 +166,14 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const unidadIngreso = document.getElementById('unidadIngreso');
+    const unidad = document.getElementById('unidadIngreso');
     const edadGestacional = document.getElementById('edadGestacional');
-    const pesoNacimiento = document.getElementById('pesoNacimiento');
+    const peso = document.getElementById('pesoNacimiento');
     const sindromeDown = document.getElementById('sindromeDown');
-    const condUtiUci = document.getElementById('condicionales-uti-uci');
+    const condUti = document.getElementById('condicionales-uti-uci');
     const condM3a = document.getElementById('condicionales-m3a');
     const recibioM0 = document.getElementById('recibioM0');
-    const m0TiempoGroup = document.getElementById('m0-tiempo-group');
+    const m0Tiempo = document.getElementById('m0-tiempo-group');
     const m0Menos40h = document.getElementById('m0Menos40h');
     const transfusionPreviaM1 = document.getElementById('transfusionPreviaM1');
     const pesquisaDudosaM1 = document.getElementById('pesquisaDudosaM1');
@@ -178,95 +181,101 @@ document.addEventListener('DOMContentLoaded', () => {
     const transfusionMenos7Dias = document.getElementById('transfusionMenos7Dias');
     const fechaNacimiento = document.getElementById('fechaNacimiento');
     const resultadosDiv = document.getElementById('resultados');
-    const calcularBtn = document.getElementById('calcularBtn');
 
-    const fechasInputs = {
+    const fechasTomadas = {
         M0: document.getElementById('fechaM0'),
         M1: document.getElementById('fechaM1'),
         M2: document.getElementById('fechaM2'),
         M3: document.getElementById('fechaM3')
     };
 
-    function actualizarCampos() {
-        const esUti = unidadIngreso.value === 'uti_uci';
-        condUtiUci.style.display = esUti ? 'block' : 'none';
+    const actualizarCondicionales = () => {
+        const esUti = unidad.value === 'uti_uci';
+        condUti.style.display = esUti ? 'block' : 'none';
         condM3a.style.display = esUti ? 'block' : 'none';
-        m0TiempoGroup.style.display = esUti && recibioM0.checked ? 'block' : 'none';
-    }
-    unidadIngreso.addEventListener('change', actualizarCampos);
-    recibioM0.addEventListener('change', actualizarCampos);
-    actualizarCampos();
+        m0Tiempo.style.display = esUti && recibioM0.checked ? 'block' : 'none';
+    };
+    unidad.addEventListener('change', actualizarCondicionales);
+    recibioM0.addEventListener('change', actualizarCondicionales);
+    actualizarCondicionales();
 
     const sumarDias = (fechaStr, dias) => {
-        if (!fechaStr) return null;
         const f = new Date(fechaStr);
         f.setDate(f.getDate() + dias);
         return f.toISOString().split('T')[0];
     };
 
-    calcularBtn.addEventListener('click', () => {
+    document.getElementById('calcularBtn').addEventListener('click', () => {
         const eg = parseInt(edadGestacional.value);
-        const peso = parseInt(pesoNacimiento.value);
+        const pesoVal = parseInt(peso.value);
         const nac = fechaNacimiento.value;
-
-        if (!nac || isNaN(eg) || isNaN(peso)) {
-            resultadosDiv.innerHTML = `<p class="error">Por favor, completa Edad Gestacional, Peso y Fecha de Nacimiento.</p>`;
+        if (!nac || isNaN(eg) || isNaN(pesoVal)) {
+            resultadosDiv.innerHTML = `<p class="error">⚠️ Debes ingresar Edad Gestacional, Peso y Fecha de Nacimiento.</p>`;
             return;
         }
 
-        const muestras = [];
+        let muestras = [];
+        let texto = "<h2>Recomendaciones para Tomas de Muestra:</h2>";
 
-        // Puerperio
-        if (unidadIngreso.value === 'cuidados_basicos') {
-            muestras.push({id: 'M1', razon: 'Entre 40–48h de vida', fecha: sumarDias(nac, 2)});
-            if (eg < 37 || peso < 2500)
-                muestras.push({id: 'M2', razon: 'A los 15 días por ser pretérmino o bajo peso', fecha: sumarDias(nac, 15)});
-            if (sindromeDown.checked)
-                muestras.push({id: 'M3', razon: 'A los 28 días por Síndrome de Down', fecha: sumarDias(nac, 28)});
+        if (unidad.value === 'cuidados_basicos') {
+            texto += "<h3>Unidad: Puerperio/Puericultura/Cuidados Básicos</h3><ul>";
+            texto += "<li><strong>Muestra 1 (M1):</strong> Entre 40–48h de vida. Independiente de edad gestacional.</li>";
+            muestras.push({id: "M1", fecha: sumarDias(nac, 2), razon: "Entre 40–48h de vida"});
+            if (eg < 37 || pesoVal < 2500) {
+                texto += "<li><strong>Muestra 2 (M2):</strong> A los 15 días. Para RN pretérmino o bajo peso.</li>";
+                muestras.push({id: "M2", fecha: sumarDias(nac, 15), razon: "Pretérmino o bajo peso"});
+            }
+            if (sindromeDown.checked) {
+                texto += "<li><strong>Muestra 3 (M3):</strong> A los 28 días. Por Síndrome de Down.</li>";
+                muestras.push({id: "M3", fecha: sumarDias(nac, 28), razon: "Síndrome de Down"});
+            }
+            texto += "</ul>";
         } else {
-            muestras.push({id: 'M0', razon: 'Al ingreso a la unidad', fecha: nac});
-            if (recibioM0.checked && m0Menos40h.checked)
-                muestras.push({id: 'M1', razon: 'Entre 48–72h ya que M0 fue <40h', fecha: sumarDias(nac, 3)});
-            else if (!recibioM0.checked)
-                muestras.push({id: 'M1', razon: 'Entre 40–48h si no se tomó M0', fecha: sumarDias(nac, 2)});
-            if (eg < 37 || peso < 2500 || transfusionPreviaM1.checked || pesquisaDudosaM1.checked)
-                muestras.push({id: 'M2', razon: 'A los 28 días (pretérmino/bajo peso o transfusión/pesquisa dudosa)', fecha: sumarDias(nac, 28)});
-            if (sindromeDown.checked)
-                muestras.push({id: 'M3', razon: 'A los 28 días (Síndrome de Down)', fecha: sumarDias(nac, 28)});
-            else if (muestraPreviaAltaMenos10Dias.checked || transfusionMenos7Dias.checked)
-                muestras.push({id: 'M3', razon: 'A los 15 días (muestra precoz o transfusión reciente)', fecha: sumarDias(nac, 15)});
+            texto += "<h3>Unidad: UTI-UCI</h3><ul>";
+            texto += "<li><strong>Muestra 0 (M0):</strong> Al ingreso a la unidad.</li>";
+            muestras.push({id: "M0", fecha: nac, razon: "Ingreso a la unidad"});
+            if (recibioM0.checked && m0Menos40h.checked) {
+                texto += "<li><strong>M1:</strong> Si M0 fue &lt;40h, repetir entre 48–72h.</li>";
+                muestras.push({id: "M1", fecha: sumarDias(nac, 3), razon: "M0 &lt;40h"});
+            } else if (!recibioM0.checked) {
+                texto += "<li><strong>M1:</strong> Si no se tomó M0, tomar entre 40–48h.</li>";
+                muestras.push({id: "M1", fecha: sumarDias(nac, 2), razon: "No se tomó M0"});
+            }
+            if (eg < 37 || pesoVal < 2500 || transfusionPreviaM1.checked || pesquisaDudosaM1.checked) {
+                texto += "<li><strong>M2:</strong> A los 28 días o al alta.</li>";
+                muestras.push({id: "M2", fecha: sumarDias(nac, 28), razon: "Condición UTI"});
+            }
+            if (sindromeDown.checked) {
+                texto += "<li><strong>M3:</strong> A los 28 días. Por Síndrome de Down.</li>";
+                muestras.push({id: "M3", fecha: sumarDias(nac, 28), razon: "Síndrome de Down"});
+            } else if (muestraPreviaAltaMenos10Dias.checked || transfusionMenos7Dias.checked) {
+                texto += "<li><strong>M3:</strong> A los 15 días si hubo muestra precoz o transfusión reciente.</li>";
+                muestras.push({id: "M3", fecha: sumarDias(nac, 15), razon: "Muestra precoz/transfusión"});
+            }
+            texto += "</ul>";
         }
 
-        // Generar tabla
-        let html = `<h2>Recomendaciones de Tomas</h2>`;
-        html += `<table><tr><th>Muestra</th><th>Fecha recomendada</th><th>Fecha tomada</th><th>Estado</th><th>Motivo</th></tr>`;
-
-        let todasTomadas = true;
-
+        // Tabla resumen
+        let tabla = `<table><tr><th>Muestra</th><th>Fecha recomendada</th><th>Fecha tomada</th><th>Estado</th><th>Motivo</th></tr>`;
+        let todas = true;
         muestras.forEach(m => {
-            const fechaTomada = fechasInputs[m.id].value;
-            const estado = fechaTomada ? `<span class='ok'>Tomada</span>` : `<span class='pending'>Pendiente</span>`;
-            if (!fechaTomada) todasTomadas = false;
-            html += `<tr>
-                <td><strong>${m.id}</strong></td>
-                <td>${m.fecha}</td>
-                <td>${fechaTomada || '-'}</td>
-                <td>${estado}</td>
-                <td>${m.razon}</td>
-            </tr>`;
+            const tomada = fechasTomadas[m.id].value;
+            const estado = tomada ? `<span class='ok'>Tomada</span>` : `<span class='pending'>Pendiente</span>`;
+            if (!tomada) todas = false;
+            tabla += `<tr><td>${m.id}</td><td>${m.fecha}</td><td>${tomada || '-'}</td><td>${estado}</td><td>${m.razon}</td></tr>`;
         });
+        tabla += "</table>";
 
-        html += `</table>`;
-
-        html += todasTomadas
-            ? `<p style="color:green; font-weight:bold;">✅ Todas las muestras requeridas fueron tomadas correctamente.</p>`
-            : `<p style="color:red; font-weight:bold;">⚠️ Aún faltan muestras por tomar.</p>`;
-
-        resultadosDiv.innerHTML = html;
+        texto += tabla;
+        texto += todas ? `<p style="color:green;font-weight:bold;">✅ Todas las muestras requeridas fueron tomadas.</p>` :
+                         `<p style="color:red;font-weight:bold;">⚠️ Aún faltan muestras por tomar.</p>`;
+        resultadosDiv.innerHTML = texto;
     });
 });
 </script>
 </body>
 </html>
+
+
 
 
