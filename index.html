@@ -4,40 +4,71 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Guía PNA de Tomas de Muestra</title>
-    <link rel="stylesheet" href="style.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 1em;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 700px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 6px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+        input[type="number"], input[type="date"], select {
+            width: 100%;
+            padding: 6px;
+            font-size: 1em;
+        }
+        input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        button {
+            padding: 10px 18px;
+            font-size: 1.1em;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-box {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <p style="text-align:center; font-style: italic;">Creado por: Eu. Carlos Andrade</p>
-
-        <h1 style="text-align:center;">Guía PNA de Tomas de Muestra</h1>
-
-        <p style="text-align:center; font-style: italic;">Creado por: Eu. Carlos Andrade</p>
-
-        <!-- NUEVO: Fecha de nacimiento -->
-        <div class="input-group">
-            <label for="fechaNacimiento"><strong>Fecha de nacimiento:</strong></label>
-            <input type="date" id="fechaNacimiento" />
-        </div>
-
-        <!-- Mostrar fechas recomendadas -->
-        <div id="fechasRecomendadas" style="margin-bottom: 20px; font-weight: bold;"></div>
-
-        <!-- Ingresar fechas reales -->
-        <div id="fechasRealesMuestras" style="margin-bottom: 20px;">
-            <p><strong>Ingrese las fechas reales de toma de muestras (si las tiene):</strong></p>
-            <label for="fechaRealM0">Fecha real Muestra 0 (M0): </label>
-            <input type="date" id="fechaRealM0" /><br /><br />
-
-            <label for="fechaRealM1">Fecha real Muestra 1 (M1): </label>
-            <input type="date" id="fechaRealM1" /><br /><br />
-
-            <label for="fechaRealM2">Fecha real Muestra 2 (M2): </label>
-            <input type="date" id="fechaRealM2" /><br /><br />
-
-            <label for="fechaRealM3">Fecha real Muestra 3 (M3): </label>
-            <input type="date" id="fechaRealM3" />
-        </div>
+        <h1>Guía PNA de Tomas de Muestra</h1>
 
         <div class="input-group">
             <label for="unidadIngreso">Unidad de Ingreso:</label>
@@ -45,6 +76,11 @@
                 <option value="cuidados_basicos">Puerperio/Puericultura/Cuidados Básicos</option>
                 <option value="uti_uci">UTI-UCI</option>
             </select>
+        </div>
+
+        <div class="input-group">
+            <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+            <input type="date" id="fechaNacimiento" />
         </div>
 
         <div class="input-group">
@@ -58,43 +94,60 @@
         </div>
 
         <div id="condicionales-uti-uci" style="display:none;">
-            <div class="input-group checkbox-group">
+            <div class="checkbox-group">
                 <input type="checkbox" id="recibioM0" />
                 <label for="recibioM0">¿Recibió Muestra 0 (M0)?</label>
             </div>
-            <div class="input-group checkbox-group" id="m0-tiempo-group" style="display:none;">
+            <div class="checkbox-group" id="m0-tiempo-group" style="display:none;">
                 <input type="checkbox" id="m0Menos40h" />
                 <label for="m0Menos40h">Muestra M0 fue tomada &lt; 40h de vida?</label>
             </div>
         </div>
 
-        <div class="input-group checkbox-group">
+        <div class="checkbox-group">
             <input type="checkbox" id="sindromeDown" />
             <label for="sindromeDown">¿Diagnóstico de Síndrome de Down?</label>
         </div>
 
         <div id="condicionales-m2-uti-uci" style="display:none;">
-            <p>Consideraciones para Muestra 2 (UTI-UCI):</p>
-            <div class="input-group checkbox-group">
+            <p><strong>Consideraciones para Muestra 2 (UTI-UCI):</strong></p>
+            <div class="checkbox-group">
                 <input type="checkbox" id="transfusionPreviaM1" />
                 <label for="transfusionPreviaM1">¿Transfusión previa a M1?</label>
             </div>
-            <div class="input-group checkbox-group">
+            <div class="checkbox-group">
                 <input type="checkbox" id="pesquisaDudosaM1" />
                 <label for="pesquisaDudosaM1">¿Pesquisa dudosa en M1?</label>
             </div>
         </div>
 
         <div id="condicionales-m3a" style="display:none;">
-            <p>Consideraciones para Muestra 3a (Casos Excepcionales):</p>
-            <div class="input-group checkbox-group">
+            <p><strong>Consideraciones para Muestra 3a (Casos Excepcionales):</strong></p>
+            <div class="checkbox-group">
                 <input type="checkbox" id="muestraPreviaAltaMenos10Dias" />
                 <label for="muestraPreviaAltaMenos10Dias">¿Muestra previa al alta &lt; 10 días de vida?</label>
             </div>
-            <div class="input-group checkbox-group">
+            <div class="checkbox-group">
                 <input type="checkbox" id="transfusionMenos7Dias" />
                 <label for="transfusionMenos7Dias">¿Transfusión &lt; 7 días desde muestra previa?</label>
             </div>
+        </div>
+
+        <hr />
+
+        <h2>Fechas de Toma de Muestras (opcional):</h2>
+
+        <div class="input-group">
+            <label for="fechaM1">Fecha Muestra 1 (M1):</label>
+            <input type="date" id="fechaM1" />
+        </div>
+        <div class="input-group">
+            <label for="fechaM2">Fecha Muestra 2 (M2):</label>
+            <input type="date" id="fechaM2" />
+        </div>
+        <div class="input-group">
+            <label for="fechaM3">Fecha Muestra 3 (M3):</label>
+            <input type="date" id="fechaM3" />
         </div>
 
         <div class="input-group">
@@ -102,10 +155,8 @@
         </div>
 
         <div class="result-box" id="resultados">
-            <p>Introduce los datos y haz clic en "Calcular Recomendación".</p>
+            Introduce los datos y haz clic en "Calcular Recomendación".
         </div>
     </div>
 
-    <script src="./script.js"></script>
-</body>
-</html>
+
