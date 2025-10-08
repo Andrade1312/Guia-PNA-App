@@ -29,12 +29,8 @@
         font-style: italic;
         color: #444;
     }
-    .input-group {
-        margin: 12px 0;
-    }
-    label {
-        font-weight: 600;
-    }
+    .input-group { margin: 12px 0; }
+    label { font-weight: 600; }
     select, input[type="number"], input[type="date"] {
         width: 100%;
         padding: 8px;
@@ -50,22 +46,13 @@
         cursor: pointer;
         font-weight: bold;
     }
-    button:hover {
-        background: #0056b3;
-    }
-    .checkbox-group {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
+    button:hover { background: #0056b3; }
+    .checkbox-group { display: flex; align-items: center; gap: 8px; }
     .result-box {
         margin-top: 25px;
         background: #eef6ff;
         padding: 20px;
         border-radius: 8px;
-    }
-    h2 {
-        color: #0056b3;
     }
     table {
         width: 100%;
@@ -83,6 +70,7 @@
     }
     .ok { color: green; font-weight: bold; }
     .pending { color: red; font-weight: bold; }
+    .warning { color: orange; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -217,52 +205,46 @@ document.addEventListener('DOMContentLoaded', () => {
         let muestras = [];
         let texto = "<h2>Recomendaciones para Tomas de Muestra:</h2>";
 
+        // Algoritmo principal
         if (unidad.value === 'cuidados_basicos') {
             texto += "<h3>Unidad: Puerperio/Puericultura/Cuidados Básicos</h3><ul>";
-            texto += "<li><strong>Muestra 1 (M1):</strong> Entre 40–48h de vida. Independiente de edad gestacional.</li>";
-            muestras.push({id: "M1", fecha: sumarDias(nac, 2), razon: "Entre 40–48h de vida"});
-            if (eg < 37 || pesoVal < 2500) {
-                texto += "<li><strong>Muestra 2 (M2):</strong> A los 15 días. Para RN pretérmino o bajo peso.</li>";
-                muestras.push({id: "M2", fecha: sumarDias(nac, 15), razon: "Pretérmino o bajo peso"});
-            }
-            if (sindromeDown.checked) {
-                texto += "<li><strong>Muestra 3 (M3):</strong> A los 28 días. Por Síndrome de Down.</li>";
-                muestras.push({id: "M3", fecha: sumarDias(nac, 28), razon: "Síndrome de Down"});
-            }
+            texto += "<li><strong>Muestra 1 (M1):</strong> Entre 40–48h de vida.</li>";
+            muestras.push("M1");
+            if (eg < 37 || pesoVal < 2500) muestras.push("M2");
+            if (sindromeDown.checked) muestras.push("M3");
             texto += "</ul>";
         } else {
             texto += "<h3>Unidad: UTI-UCI</h3><ul>";
-            texto += "<li><strong>Muestra 0 (M0):</strong> Al ingreso a la unidad.</li>";
-            muestras.push({id: "M0", fecha: nac, razon: "Ingreso a la unidad"});
-            if (recibioM0.checked && m0Menos40h.checked) {
-                texto += "<li><strong>M1:</strong> Si M0 fue &lt;40h, repetir entre 48–72h.</li>";
-                muestras.push({id: "M1", fecha: sumarDias(nac, 3), razon: "M0 &lt;40h"});
-            } else if (!recibioM0.checked) {
-                texto += "<li><strong>M1:</strong> Si no se tomó M0, tomar entre 40–48h.</li>";
-                muestras.push({id: "M1", fecha: sumarDias(nac, 2), razon: "No se tomó M0"});
-            }
-            if (eg < 37 || pesoVal < 2500 || transfusionPreviaM1.checked || pesquisaDudosaM1.checked) {
-                texto += "<li><strong>M2:</strong> A los 28 días o al alta.</li>";
-                muestras.push({id: "M2", fecha: sumarDias(nac, 28), razon: "Condición UTI"});
-            }
-            if (sindromeDown.checked) {
-                texto += "<li><strong>M3:</strong> A los 28 días. Por Síndrome de Down.</li>";
-                muestras.push({id: "M3", fecha: sumarDias(nac, 28), razon: "Síndrome de Down"});
-            } else if (muestraPreviaAltaMenos10Dias.checked || transfusionMenos7Dias.checked) {
-                texto += "<li><strong>M3:</strong> A los 15 días si hubo muestra precoz o transfusión reciente.</li>";
-                muestras.push({id: "M3", fecha: sumarDias(nac, 15), razon: "Muestra precoz/transfusión"});
-            }
+            muestras.push("M0");
+            if (recibioM0.checked && m0Menos40h.checked) muestras.push("M1");
+            else if (!recibioM0.checked) muestras.push("M1");
+            if (eg < 37 || pesoVal < 2500 || transfusionPreviaM1.checked || pesquisaDudosaM1.checked) muestras.push("M2");
+            if (sindromeDown.checked || muestraPreviaAltaMenos10Dias.checked || transfusionMenos7Dias.checked) muestras.push("M3");
             texto += "</ul>";
         }
 
-        // Tabla resumen
-        let tabla = `<table><tr><th>Muestra</th><th>Fecha recomendada</th><th>Fecha tomada</th><th>Estado</th><th>Motivo</th></tr>`;
+        // Tabla
+        let tabla = `<table><tr><th>Muestra</th><th>Fecha tomada</th><th>Estado</th><th>Observación</th></tr>`;
         let todas = true;
-        muestras.forEach(m => {
-            const tomada = fechasTomadas[m.id].value;
-            const estado = tomada ? `<span class='ok'>Tomada</span>` : `<span class='pending'>Pendiente</span>`;
-            if (!tomada) todas = false;
-            tabla += `<tr><td>${m.id}</td><td>${m.fecha}</td><td>${tomada || '-'}</td><td>${estado}</td><td>${m.razon}</td></tr>`;
+
+        const todasPosibles = ["M0", "M1", "M2", "M3"];
+        todasPosibles.forEach(id => {
+            const tomada = fechasTomadas[id].value;
+            let estado = "-", obs = "-";
+            if (muestras.includes(id)) {
+                if (tomada) {
+                    estado = `<span class='ok'>Tomada</span>`;
+                    obs = "Corresponde al algoritmo";
+                } else {
+                    estado = `<span class='pending'>Pendiente</span>`;
+                    obs = "Debe realizarse";
+                    todas = false;
+                }
+            } else if (tomada) {
+                estado = `<span class='warning'>No requerida</span>`;
+                obs = `Muestra tomada el ${tomada}, pero no cumple criterio del algoritmo.`;
+            }
+            tabla += `<tr><td>${id}</td><td>${tomada || '-'}</td><td>${estado}</td><td>${obs}</td></tr>`;
         });
         tabla += "</table>";
 
@@ -275,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
 
 
 
