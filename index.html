@@ -1,275 +1,392 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Guía PNA de Tomas de Muestra</title>
 <style>
-    body {
-        font-family: "Segoe UI", sans-serif;
-        background: #f7f9fc;
-        margin: 0;
-        padding: 0;
-        color: #333;
-    }
-    .container {
-        background: white;
-        max-width: 900px;
-        margin: 30px auto;
-        padding: 25px 35px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-        text-align: center;
-        color: #0056b3;
-    }
-    p.autor {
-        text-align: center;
-        font-style: italic;
-        color: #444;
-    }
-    .input-group { margin: 12px 0; }
-    label { font-weight: 600; }
-    select, input[type="number"], input[type="date"] {
-        width: 100%;
-        padding: 8px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
-    button {
-        background: #007bff;
-        border: none;
-        color: white;
-        padding: 10px 15px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-    button:hover { background: #0056b3; }
-    .checkbox-group { display: flex; align-items: center; gap: 8px; }
-    .result-box {
-        margin-top: 25px;
-        background: #eef6ff;
-        padding: 20px;
-        border-radius: 8px;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    th, td {
-        border: 1px solid #ccc;
-        padding: 10px;
-        text-align: center;
-    }
-    th {
-        background: #0056b3;
-        color: white;
-    }
-    .ok { color: green; font-weight: bold; }
-    .pending { color: red; font-weight: bold; }
-    .warning { color: orange; font-weight: bold; }
+  body {
+    font-family: "Segoe UI", sans-serif;
+    background: #f7f9fc;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  .container {
+    background: white;
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 25px 35px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  h1 {
+    text-align: center;
+    color: #0056b3;
+  }
+  p.autor {
+    text-align: center;
+    font-style: italic;
+    color: #444;
+  }
+  .input-group {
+    margin: 12px 0;
+  }
+  label {
+    font-weight: 600;
+  }
+  select,
+  input[type="number"],
+  input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  button {
+    background: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  button:hover {
+    background: #0056b3;
+  }
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .result-box {
+    margin-top: 25px;
+    background: #eef6ff;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  th,
+  td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+  th {
+    background: #0056b3;
+    color: white;
+  }
+  .ok {
+    color: green;
+    font-weight: bold;
+  }
+  .pending {
+    color: red;
+    font-weight: bold;
+  }
+  .warning {
+    color: orange;
+    font-weight: bold;
+  }
 </style>
 </head>
 <body>
-<div class="container">
+  <div class="container">
     <h1>Guía PNA de Tomas de Muestra</h1>
     <p class="autor">Creado por: Eu. Carlos Andrade</p>
 
     <div class="input-group">
-        <label for="unidadIngreso">Unidad de Ingreso:</label>
-        <select id="unidadIngreso">
-            <option value="cuidados_basicos">Puerperio/Puericultura/Cuidados Básicos</option>
-            <option value="uti_uci">UTI-UCI</option>
-        </select>
+      <label for="unidadIngreso">Unidad de Ingreso:</label>
+      <select id="unidadIngreso">
+        <option value="cuidados_basicos">Puerperio/Puericultura/Cuidados Básicos</option>
+        <option value="uti_uci">UTI-UCI</option>
+      </select>
     </div>
 
     <div class="input-group">
-        <label for="edadGestacional">Edad Gestacional (semanas):</label>
-        <input type="number" id="edadGestacional" min="20" max="45" value="38">
+      <label for="edadGestacional">Edad Gestacional (semanas):</label>
+      <input type="number" id="edadGestacional" min="20" max="45" value="38" />
     </div>
 
     <div class="input-group">
-        <label for="pesoNacimiento">Peso de Nacimiento (gramos):</label>
-        <input type="number" id="pesoNacimiento" min="500" max="6000" value="3000">
+      <label for="pesoNacimiento">Peso de Nacimiento (gramos):</label>
+      <input type="number" id="pesoNacimiento" min="500" max="6000" value="3000" />
     </div>
 
-    <div id="condicionales-uti-uci" style="display:none;">
-        <div class="input-group checkbox-group">
-            <input type="checkbox" id="recibioM0">
-            <label for="recibioM0">¿Recibió Muestra 0 (M0)?</label>
-        </div>
-        <div class="input-group checkbox-group" id="m0-tiempo-group" style="display:none;">
-            <input type="checkbox" id="m0Menos40h">
-            <label for="m0Menos40h">¿Muestra M0 fue tomada &lt; 40h de vida?</label>
-        </div>
-        <div class="input-group checkbox-group">
-            <input type="checkbox" id="transfusionPreviaM1">
-            <label for="transfusionPreviaM1">¿Transfusión previa a M1?</label>
-        </div>
-        <div class="input-group checkbox-group">
-            <input type="checkbox" id="pesquisaDudosaM1">
-            <label for="pesquisaDudosaM1">¿Pesquisa dudosa en M1?</label>
-        </div>
+    <div id="condicionales-uti-uci" style="display: none;">
+      <div class="input-group checkbox-group">
+        <input type="checkbox" id="recibioM0" />
+        <label for="recibioM0">¿Recibió Muestra 0 (M0)?</label>
+      </div>
+      <div class="input-group checkbox-group" id="m0-tiempo-group" style="display: none;">
+        <input type="checkbox" id="m0Menos40h" />
+        <label for="m0Menos40h">¿Muestra M0 fue tomada &lt; 40h de vida?</label>
+      </div>
+      <div class="input-group checkbox-group">
+        <input type="checkbox" id="transfusionPreviaM1" />
+        <label for="transfusionPreviaM1">¿Transfusión previa a M1?</label>
+      </div>
+      <div class="input-group checkbox-group">
+        <input type="checkbox" id="pesquisaDudosaM1" />
+        <label for="pesquisaDudosaM1">¿Pesquisa dudosa en M1?</label>
+      </div>
     </div>
 
-    <div id="condicionales-m3a" style="display:none;">
-        <div class="input-group checkbox-group">
-            <input type="checkbox" id="muestraPreviaAltaMenos10Dias">
-            <label for="muestraPreviaAltaMenos10Dias">¿Muestra previa al alta &lt; 10 días de vida?</label>
-        </div>
-        <div class="input-group checkbox-group">
-            <input type="checkbox" id="transfusionMenos7Dias">
-            <label for="transfusionMenos7Dias">¿Transfusión &lt; 7 días desde muestra previa?</label>
-        </div>
+    <div id="condicionales-m3a" style="display: none;">
+      <div class="input-group checkbox-group">
+        <input type="checkbox" id="muestraPreviaAltaMenos10Dias" />
+        <label for="muestraPreviaAltaMenos10Dias"
+          >¿Muestra previa al alta &lt; 10 días de vida?</label
+        >
+      </div>
+      <div class="input-group checkbox-group">
+        <input type="checkbox" id="transfusionMenos7Dias" />
+        <label for="transfusionMenos7Dias"
+          >¿Transfusión &lt; 7 días desde muestra previa?</label
+        >
+      </div>
     </div>
 
     <div class="input-group checkbox-group">
-        <input type="checkbox" id="sindromeDown">
-        <label for="sindromeDown">¿Diagnóstico de Síndrome de Down?</label>
+      <input type="checkbox" id="sindromeDown" />
+      <label for="sindromeDown">¿Diagnóstico de Síndrome de Down?</label>
     </div>
 
     <div class="input-group">
-        <label for="fechaNacimiento">Fecha de Nacimiento:</label>
-        <input type="date" id="fechaNacimiento">
+      <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+      <input type="date" id="fechaNacimiento" />
     </div>
 
     <h3>Fechas de toma de muestras realizadas (si ya las tienen)</h3>
-    <div class="input-group"><label for="fechaM0">Muestra 0 (M0):</label><input type="date" id="fechaM0"></div>
-    <div class="input-group"><label for="fechaM1">Muestra 1 (M1):</label><input type="date" id="fechaM1"></div>
-    <div class="input-group"><label for="fechaM2">Muestra 2 (M2):</label><input type="date" id="fechaM2"></div>
-    <div class="input-group"><label for="fechaM3">Muestra 3 (M3):</label><input type="date" id="fechaM3"></div>
+    <div class="input-group">
+      <label for="fechaM0">Muestra 0 (M0):</label>
+      <input type="date" id="fechaM0" />
+    </div>
+    <div class="input-group">
+      <label for="fechaM1">Muestra 1 (M1):</label>
+      <input type="date" id="fechaM1" />
+    </div>
+    <div class="input-group">
+      <label for="fechaM2">Muestra 2 (M2):</label>
+      <input type="date" id="fechaM2" />
+    </div>
+    <div class="input-group">
+      <label for="fechaM3">Muestra 3 (M3):</label>
+      <input type="date" id="fechaM3" />
+    </div>
 
     <div class="input-group">
-        <button id="calcularBtn">Calcular Recomendación</button>
+      <button id="calcularBtn">Calcular Recomendación</button>
     </div>
 
     <div class="result-box" id="resultados">
-        <p>Introduce los datos y haz clic en "Calcular Recomendación".</p>
+      <p>Introduce los datos y haz clic en "Calcular Recomendación".</p>
     </div>
-</div>
+  </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const unidad = document.getElementById('unidadIngreso');
-    const edadGestacional = document.getElementById('edadGestacional');
-    const peso = document.getElementById('pesoNacimiento');
-    const sindromeDown = document.getElementById('sindromeDown');
-    const condUti = document.getElementById('condicionales-uti-uci');
-    const condM3a = document.getElementById('condicionales-m3a');
-    const recibioM0 = document.getElementById('recibioM0');
-    const m0Tiempo = document.getElementById('m0-tiempo-group');
-    const m0Menos40h = document.getElementById('m0Menos40h');
-    const transfusionPreviaM1 = document.getElementById('transfusionPreviaM1');
-    const pesquisaDudosaM1 = document.getElementById('pesquisaDudosaM1');
-    const muestraPreviaAltaMenos10Dias = document.getElementById('muestraPreviaAltaMenos10Dias');
-    const transfusionMenos7Dias = document.getElementById('transfusionMenos7Dias');
-    const fechaNacimiento = document.getElementById('fechaNacimiento');
-    const resultadosDiv = document.getElementById('resultados');
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const unidad = document.getElementById("unidadIngreso");
+      const edadGestacional = document.getElementById("edadGestacional");
+      const peso = document.getElementById("pesoNacimiento");
+      const sindromeDown = document.getElementById("sindromeDown");
+      const condUti = document.getElementById("condicionales-uti-uci");
+      const condM3a = document.getElementById("condicionales-m3a");
+      const recibioM0 = document.getElementById("recibioM0");
+      const m0Tiempo = document.getElementById("m0-tiempo-group");
+      const m0Menos40h = document.getElementById("m0Menos40h");
+      const transfusionPreviaM1 = document.getElementById("transfusionPreviaM1");
+      const pesquisaDudosaM1 = document.getElementById("pesquisaDudosaM1");
+      const muestraPreviaAltaMenos10Dias = document.getElementById(
+        "muestraPreviaAltaMenos10Dias"
+      );
+      const transfusionMenos7Dias = document.getElementById("transfusionMenos7Dias");
+      const fechaNacimiento = document.getElementById("fechaNacimiento");
+      const resultadosDiv = document.getElementById("resultados");
 
-    const fechasTomadas = {
-        M0: document.getElementById('fechaM0'),
-        M1: document.getElementById('fechaM1'),
-        M2: document.getElementById('fechaM2'),
-        M3: document.getElementById('fechaM3')
-    };
+      const fechasTomadas = {
+        M0: document.getElementById("fechaM0"),
+        M1: document.getElementById("fechaM1"),
+        M2: document.getElementById("fechaM2"),
+        M3: document.getElementById("fechaM3"),
+      };
 
-    const actualizarCondicionales = () => {
-        const esUti = unidad.value === 'uti_uci';
-        condUti.style.display = esUti ? 'block' : 'none';
-        condM3a.style.display = esUti ? 'block' : 'none';
-        m0Tiempo.style.display = esUti && recibioM0.checked ? 'block' : 'none';
-    };
-    unidad.addEventListener('change', actualizarCondicionales);
-    recibioM0.addEventListener('change', actualizarCondicionales);
-    actualizarCondicionales();
+      const actualizarCondicionales = () => {
+        const esUti = unidad.value === "uti_uci";
+        condUti.style.display = esUti ? "block" : "none";
+        condM3a.style.display = esUti ? "block" : "none";
+        m0Tiempo.style.display = esUti && recibioM0.checked ? "block" : "none";
+      };
+      unidad.addEventListener("change", actualizarCondicionales);
+      recibioM0.addEventListener("change", actualizarCondicionales);
+      actualizarCondicionales();
 
-    const diasEntre = (f1, f2) => (new Date(f2) - new Date(f1)) / (1000 * 60 * 60 * 24);
+      // Retorna la diferencia en días entre f2 y f1
+      const diasEntre = (f1, f2) =>
+        (new Date(f2).getTime() - new Date(f1).getTime()) / (1000 * 60 * 60 * 24);
 
-    document.getElementById('calcularBtn').addEventListener('click', () => {
+      // Suma días a fecha (yyyy-mm-dd)
+      const sumarDias = (fechaStr, dias) => {
+        const fecha = new Date(fechaStr);
+        fecha.setDate(fecha.getDate() + dias);
+        return fecha.toISOString().slice(0, 10);
+      };
+
+      document.getElementById("calcularBtn").addEventListener("click", () => {
         const eg = parseInt(edadGestacional.value);
         const pesoVal = parseInt(peso.value);
         const nac = fechaNacimiento.value;
         if (!nac || isNaN(eg) || isNaN(pesoVal)) {
-            resultadosDiv.innerHTML = `<p class="error">⚠️ Debes ingresar Edad Gestacional, Peso y Fecha de Nacimiento.</p>`;
-            return;
+          resultadosDiv.innerHTML = `<p class="error">⚠️ Debes ingresar Edad Gestacional, Peso y Fecha de Nacimiento.</p>`;
+          return;
         }
 
         let muestras = [];
         let texto = "<h2>Recomendaciones para Tomas de Muestra:</h2>";
 
-        if (unidad.value === 'cuidados_basicos') {
-            texto += "<h3>Unidad: Puerperio/Puericultura/Cuidados Básicos</h3><ul>";
-            texto += "<li><strong>Muestra 1 (M1):</strong> Entre 40–48h de vida.</li>";
-            muestras.push({ id: "M1", min: 1.7, max: 2.0, desc: "Entre 40–48h de vida" });
-            if (eg < 37 || pesoVal < 2500) muestras.push({ id: "M2", min: 15, max: 16, desc: "A los 15 días de vida" });
-            if (sindromeDown.checked) muestras.push({ id: "M3", min: 28, max: 29, desc: "A los 28 días de vida" });
-            texto += "</ul>";
+        if (unidad.value === "cuidados_basicos") {
+          texto +=
+            "<h3>Unidad: Puerperio/Puericultura/Cuidados Básicos</h3><ul>";
+          // M1: 40-48h = 1.7-2 días
+          muestras.push({
+            id: "M1",
+            min: 1.7,
+            max: 2.0,
+            desc: "Entre 40–48h de vida",
+            diaMin: 2,
+            diaMax: 2,
+          });
+          if (eg < 37 || pesoVal < 2500)
+            muestras.push({
+              id: "M2",
+              min: 15,
+              max: 16,
+              desc: "A los 15 días de vida",
+              diaMin: 15,
+              diaMax: 15,
+            });
+          if (sindromeDown.checked)
+            muestras.push({
+              id: "M3",
+              min: 28,
+              max: 29,
+              desc: "A los 28 días de vida",
+              diaMin: 28,
+              diaMax: 28,
+            });
+          texto += "</ul>";
         } else {
-            texto += "<h3>Unidad: UTI-UCI</h3><ul>";
-            muestras.push({ id: "M0", min: 0, max: 0.1, desc: "Al ingreso, antes de medicamentos" });
-            if (recibioM0.checked && m0Menos40h.checked) muestras.push({ id: "M1", min: 2, max: 3, desc: "Si M0 <40h, tomar nueva muestra 48–72h" });
-            else if (!recibioM0.checked) muestras.push({ id: "M1", min: 1.7, max: 2.0, desc: "Si no se tomó M0, entre 40–48h" });
-            if (eg < 37 || pesoVal < 2500 || transfusionPreviaM1.checked || pesquisaDudosaM1.checked)
-                muestras.push({ id: "M2", min: 28, max: 30, desc: "A los 28 días o al alta" });
-            if (sindromeDown.checked || muestraPreviaAltaMenos10Dias.checked || transfusionMenos7Dias.checked)
-                muestras.push({ id: "M3", min: 28, max: 30, desc: "Casos excepcionales" });
-            texto += "</ul>";
+          texto += "<h3>Unidad: UTI-UCI</h3><ul>";
+          muestras.push({
+            id: "M0",
+            min: 0,
+            max: 0.1,
+            desc: "Al ingreso, antes de medicamentos",
+            diaMin: 0,
+            diaMax: 0,
+          });
+          if (recibioM0.checked && m0Menos40h.checked)
+            muestras.push({
+              id: "M1",
+              min: 2,
+              max: 3,
+              desc: "Si M0 <40h, tomar nueva muestra 48–72h",
+              diaMin: 2,
+              diaMax: 3,
+            });
+          else if (!recibioM0.checked)
+            muestras.push({
+              id: "M1",
+              min: 1.7,
+              max: 2.0,
+              desc: "Si no se tomó M0, entre 40–48h",
+              diaMin: 2,
+              diaMax: 2,
+            });
+          if (
+            eg < 37 ||
+            pesoVal < 2500 ||
+            transfusionPreviaM1.checked ||
+            pesquisaDudosaM1.checked
+          )
+            muestras.push({
+              id: "M2",
+              min: 28,
+              max: 30,
+              desc: "A los 28 días o al alta",
+              diaMin: 28,
+              diaMax: 28,
+            });
+          if (muestraPreviaAltaMenos10Dias.checked || transfusionMenos7Dias.checked)
+            muestras.push({
+              id: "M3a",
+              min: 14,
+              max: 15,
+              desc: "A los 14 días después del alta o última muestra",
+              diaMin: 14,
+              diaMax: 14,
+            });
+          texto += "</ul>";
         }
 
-        let advertencias = [];
-        let tabla = `<table><tr><th>Muestra</th><th>Fecha tomada</th><th>Estado</th><th>Observación</th></tr>`;
-        let todas = true;
+        // Agregar texto con las fechas recomendadas
+        texto += "<h3>Fechas recomendadas para toma de muestra (desde fecha nacimiento):</h3><ul>";
+        muestras.forEach((m) => {
+          let fechaRec = sumarDias(nac, m.diaMin);
+          texto += `<li><b>${m.id}</b>: ${m.desc} — Fecha recomendada: <b>${fechaRec}</b></li>`;
+        });
+        texto += "</ul>";
 
-        ["M0", "M1", "M2", "M3"].forEach(id => {
-            const tomada = fechasTomadas[id].value;
-            const regla = muestras.find(m => m.id === id);
-            if (!regla && !tomada) return; // solo mostrar si aplica o se tomó
+        // Mostrar tabla con fechas ingresadas y recomendadas
+        texto += `<h3>Resumen de muestras</h3><table>
+        <thead>
+          <tr>
+            <th>Muestra</th>
+            <th>Descripción</th>
+            <th>Fecha recomendada</th>
+            <th>Fecha tomada</th>
+            <th>Estado</th>
+          </tr>
+        </thead><tbody>`;
 
-            let estado = "-", obs = "-";
-            if (regla) {
-                if (tomada) {
-                    const dias = diasEntre(nac, tomada);
-                    if (dias < regla.min * 24 / 24 || dias > regla.max * 24 / 24) {
-                        estado = `<span class='warning'>Fuera de rango</span>`;
-                        obs = `⏰ Muestra tomada ${Math.round(dias - regla.min)} días fuera del rango (${regla.desc}).`;
-                        advertencias.push(`⚠️ ${obs}`);
-                    } else {
-                        estado = `<span class='ok'>Tomada</span>`;
-                        obs = "Corresponde al algoritmo";
-                    }
-                } else {
-                    estado = `<span class='pending'>Pendiente</span>`;
-                    obs = "Debe realizarse";
-                    todas = false;
-                }
-            } else if (tomada) {
-                estado = `<span class='warning'>No requerida</span>`;
-                obs = `Muestra tomada el ${tomada}, pero no cumple criterio del algoritmo.`;
-                advertencias.push(`⚠️ ${obs}`);
+        muestras.forEach((m) => {
+          const fechaRec = sumarDias(nac, m.diaMin);
+          const fechaTomada = fechasTomadas[m.id] ? fechasTomadas[m.id].value : "";
+          let estado = "";
+          if (!fechaTomada) {
+            estado = '<span class="pending">Pendiente</span>';
+          } else {
+            const diffDias = Math.abs(diasEntre(fechaRec, fechaTomada));
+            if (diffDias <= 3) {
+              estado = '<span class="ok">Correcta</span>';
+            } else {
+              estado = `<span class="warning">Desviación de ${diffDias.toFixed(
+                1
+              )} días</span>`;
             }
-            tabla += `<tr><td>${id}</td><td>${tomada || '-'}</td><td>${estado}</td><td>${obs}</td></tr>`;
+          }
+
+          texto += `<tr>
+            <td>${m.id}</td>
+            <td>${m.desc}</td>
+            <td>${fechaRec}</td>
+            <td>${fechaTomada || "-"}</td>
+            <td>${estado}</td>
+          </tr>`;
         });
 
-        tabla += "</table>";
-
-        if (advertencias.length > 0) {
-            texto += `<h3>Observaciones adicionales:</h3><ul>${advertencias.map(a => `<li>${a}</li>`).join('')}</ul>`;
-        }
-
-        texto += tabla;
-        texto += todas
-            ? `<p style="color:green;font-weight:bold;">✅ Todas las muestras requeridas fueron tomadas.</p>`
-            : `<p style="color:red;font-weight:bold;">⚠️ Aún faltan muestras por tomar.</p>`;
+        texto += "</tbody></table>";
 
         resultadosDiv.innerHTML = texto;
+      });
     });
-});
-</script>
+  </script>
 </body>
 </html>
-
 
 
