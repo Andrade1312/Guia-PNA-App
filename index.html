@@ -187,12 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
     recibioM0.addEventListener('change', actualizarCondicionales);
     actualizarCondicionales();
 
-    const sumarDias = (fechaStr, dias) => {
-        const f = new Date(fechaStr);
-        f.setDate(f.getDate() + dias);
-        return f.toISOString().split('T')[0];
-    };
-
     document.getElementById('calcularBtn').addEventListener('click', () => {
         const eg = parseInt(edadGestacional.value);
         const pesoVal = parseInt(peso.value);
@@ -205,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let muestras = [];
         let texto = "<h2>Recomendaciones para Tomas de Muestra:</h2>";
 
-        // Algoritmo principal
         if (unidad.value === 'cuidados_basicos') {
             texto += "<h3>Unidad: Puerperio/Puericultura/Cuidados Básicos</h3><ul>";
             texto += "<li><strong>Muestra 1 (M1):</strong> Entre 40–48h de vida.</li>";
@@ -223,40 +216,50 @@ document.addEventListener('DOMContentLoaded', () => {
             texto += "</ul>";
         }
 
-        // Tabla
+        let advertencias = [];
         let tabla = `<table><tr><th>Muestra</th><th>Fecha tomada</th><th>Estado</th><th>Observación</th></tr>`;
         let todas = true;
+        const todasPosibles = ["M0","M1","M2","M3"];
 
-        const todasPosibles = ["M0", "M1", "M2", "M3"];
-        todasPosibles.forEach(id => {
+        todasPosibles.forEach(id=>{
             const tomada = fechasTomadas[id].value;
-            let estado = "-", obs = "-";
-            if (muestras.includes(id)) {
-                if (tomada) {
-                    estado = `<span class='ok'>Tomada</span>`;
-                    obs = "Corresponde al algoritmo";
-                } else {
-                    estado = `<span class='pending'>Pendiente</span>`;
-                    obs = "Debe realizarse";
-                    todas = false;
-                }
-            } else if (tomada) {
-                estado = `<span class='warning'>No requerida</span>`;
-                obs = `Muestra tomada el ${tomada}, pero no cumple criterio del algoritmo.`;
-            }
-            tabla += `<tr><td>${id}</td><td>${tomada || '-'}</td><td>${estado}</td><td>${obs}</td></tr>`;
-        });
-        tabla += "</table>";
+            if (!muestras.includes(id) && !tomada) return; // ✅ No mostrar filas innecesarias
 
-        texto += tabla;
-        texto += todas ? `<p style="color:green;font-weight:bold;">✅ Todas las muestras requeridas fueron tomadas.</p>` :
-                         `<p style="color:red;font-weight:bold;">⚠️ Aún faltan muestras por tomar.</p>`;
-        resultadosDiv.innerHTML = texto;
+            let estado="-", obs="-";
+            if (muestras.includes(id)){
+                if (tomada){
+                    estado=`<span class='ok'>Tomada</span>`;
+                    obs="Corresponde al algoritmo";
+                } else {
+                    estado=`<span class='pending'>Pendiente</span>`;
+                    obs="Debe realizarse";
+                    todas=false;
+                }
+            } else if (tomada){
+                estado=`<span class='warning'>No requerida</span>`;
+                obs=`Muestra tomada el ${tomada}, pero no cumple criterio del algoritmo.`;
+                advertencias.push(`⚠️ ${obs}`);
+            }
+            tabla+=`<tr><td>${id}</td><td>${tomada||'-'}</td><td>${estado}</td><td>${obs}</td></tr>`;
+        });
+
+        tabla+="</table>";
+
+        texto+=tabla;
+
+        if (advertencias.length>0){
+            texto+=`<h3>Observaciones adicionales:</h3><ul>${advertencias.map(a=>`<li>${a}</li>`).join('')}</ul>`;
+        }
+
+        texto+=todas
+          ? `<p style="color:green;font-weight:bold;">✅ Todas las muestras requeridas fueron tomadas.</p>`
+          : `<p style="color:red;font-weight:bold;">⚠️ Aún faltan muestras por tomar.</p>`;
+
+        resultadosDiv.innerHTML=texto;
     });
 });
 </script>
 </body>
 </html>
-
 
 
