@@ -1,107 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Guía Pesquisa Nacional Ampliada</title>
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background: #f7f9fc;
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
-    .container {
-      background: white;
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 25px 35px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #0056b3;
-    }
-    p.autor {
-      text-align: center;
-      font-style: italic;
-      color: #444;
-    }
-    .input-group {
-      margin: 12px 0;
-    }
-    label {
-      font-weight: 600;
-    }
-    select,
-    input[type="number"],
-    input[type="date"] {
-      width: 100%;
-      padding: 8px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background: #007bff;
-      border: none;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .result-box {
-      margin-top: 25px;
-      background: #eef6ff;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th,
-    td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background: #0056b3;
-      color: white;
-    }
-    .ok {
-      color: green;
-      font-weight: bold;
-    }
-    .pending {
-      color: red;
-      font-weight: bold;
-    }
-    .warning {
-      color: orange;
-      font-weight: bold;
-    }
-    .alerta {
-      background: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeeba;
-      padding: 10px;
-      border-radius: 5px;
-      margin-top: 15px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Guía Pesquisa Nacional Ampliada</title>
+<style>
+  body {
+    font-family: "Segoe UI", sans-serif;
+    background: #f7f9fc;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  .container {
+    background: white;
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 25px 35px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  h1 {
+    text-align: center;
+    color: #0056b3;
+  }
+  p.autor {
+    text-align: center;
+    font-style: italic;
+    color: #444;
+  }
+  .input-group {
+    margin: 12px 0;
+  }
+  label {
+    font-weight: 600;
+  }
+  select,
+  input[type="number"],
+  input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  button {
+    background: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  button:hover {
+    background: #0056b3;
+  }
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .result-box {
+    margin-top: 25px;
+    background: #eef6ff;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  th,
+  td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+  th {
+    background: #0056b3;
+    color: white;
+  }
+  .ok {
+    color: green;
+    font-weight: bold;
+  }
+  .pending {
+    color: red;
+    font-weight: bold;
+  }
+  .warning {
+    color: orange;
+    font-weight: bold;
+  }
+  .alerta {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 15px;
+  }
+</style>
 </head>
 <body>
   <div class="container">
@@ -167,22 +167,10 @@
     </div>
 
     <h3>Fechas de toma de muestras realizadas (si ya las tienen)</h3>
-    <div class="input-group">
-      <label for="fechaM0">Muestra 0 (M0):</label>
-      <input type="date" id="fechaM0" />
-    </div>
-    <div class="input-group">
-      <label for="fechaM1">Muestra 1 (M1):</label>
-      <input type="date" id="fechaM1" />
-    </div>
-    <div class="input-group">
-      <label for="fechaM2">Muestra 2 (M2):</label>
-      <input type="date" id="fechaM2" />
-    </div>
-    <div class="input-group">
-      <label for="fechaM3">Muestra 3 (M3):</label>
-      <input type="date" id="fechaM3" />
-    </div>
+    <div class="input-group"><label for="fechaM0">Muestra 0 (M0):</label><input type="date" id="fechaM0" /></div>
+    <div class="input-group"><label for="fechaM1">Muestra 1 (M1):</label><input type="date" id="fechaM1" /></div>
+    <div class="input-group"><label for="fechaM2">Muestra 2 (M2):</label><input type="date" id="fechaM2" /></div>
+    <div class="input-group"><label for="fechaM3">Muestra 3 (M3):</label><input type="date" id="fechaM3" /></div>
 
     <div class="input-group">
       <button id="calcularBtn">Calcular Recomendación</button>
@@ -194,101 +182,162 @@
   </div>
 
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const unidad = document.getElementById("unidadIngreso");
-    const edadGestacional = document.getElementById("edadGestacional");
-    const peso = document.getElementById("pesoNacimiento");
-    const sindromeDown = document.getElementById("sindromeDown");
-    const condUti = document.getElementById("condicionales-uti-uci");
-    const condM3a = document.getElementById("condicionales-m3a");
-    const recibioM0 = document.getElementById("recibioM0");
-    const m0Tiempo = document.getElementById("m0-tiempo-group");
-    const m0Menos40h = document.getElementById("m0Menos40h");
-    const transfusionPreviaM1 = document.getElementById("transfusionPreviaM1");
-    const pesquisaDudosaM1 = document.getElementById("pesquisaDudosaM1");
-    const muestraPreviaAltaMenos10Dias = document.getElementById("muestraPreviaAltaMenos10Dias");
-    const transfusionMenos7Dias = document.getElementById("transfusionMenos7Dias");
-    const fechaNacimiento = document.getElementById("fechaNacimiento");
-    const resultadosDiv = document.getElementById("resultados");
+document.addEventListener("DOMContentLoaded", () => {
+  const unidad = document.getElementById("unidadIngreso");
+  const edadGestacional = document.getElementById("edadGestacional");
+  const peso = document.getElementById("pesoNacimiento");
+  const sindromeDown = document.getElementById("sindromeDown");
+  const condUti = document.getElementById("condicionales-uti-uci");
+  const condM3a = document.getElementById("condicionales-m3a");
+  const recibioM0 = document.getElementById("recibioM0");
+  const m0Tiempo = document.getElementById("m0-tiempo-group");
+  const m0Menos40h = document.getElementById("m0Menos40h");
+  const transfusionPreviaM1 = document.getElementById("transfusionPreviaM1");
+  const pesquisaDudosaM1 = document.getElementById("pesquisaDudosaM1");
+  const muestraPreviaAltaMenos10Dias = document.getElementById("muestraPreviaAltaMenos10Dias");
+  const transfusionMenos7Dias = document.getElementById("transfusionMenos7Dias");
+  const fechaNacimiento = document.getElementById("fechaNacimiento");
+  const resultadosDiv = document.getElementById("resultados");
 
-    const fechasTomadas = {
-      M0: document.getElementById("fechaM0"),
-      M1: document.getElementById("fechaM1"),
-      M2: document.getElementById("fechaM2"),
-      M3: document.getElementById("fechaM3"),
-    };
+  const fechasTomadas = {
+    M0: document.getElementById("fechaM0"),
+    M1: document.getElementById("fechaM1"),
+    M2: document.getElementById("fechaM2"),
+    M3: document.getElementById("fechaM3"),
+  };
 
-    const actualizarCondicionales = () => {
-      if (unidad.value === "uti_uci") {
-        condUti.style.display = "block";
-        condM3a.style.display = "block";
-      } else {
-        condUti.style.display = "none";
-        condM3a.style.display = "none";
+  const actualizarCondicionales = () => {
+    const esUti = unidad.value === "uti_uci";
+    condUti.style.display = esUti ? "block" : "none";
+    condM3a.style.display = esUti ? "block" : "none";
+    m0Tiempo.style.display = esUti && recibioM0.checked ? "flex" : "none";
+  };
+  unidad.addEventListener("change", actualizarCondicionales);
+  recibioM0.addEventListener("change", actualizarCondicionales);
+  actualizarCondicionales();
+
+  const diasEntre = (f1, f2) => (!f1 || !f2 ? NaN : (new Date(f2) - new Date(f1)) / (1000 * 60 * 60 * 24));
+  const sumarDias = (fechaStr, dias) => {
+    if (!fechaStr) return null;
+    const f = new Date(fechaStr);
+    f.setDate(f.getDate() + dias);
+    return f.toISOString().slice(0, 10);
+  };
+  const edadEnDias = (fecha) => diasEntre(fechaNacimiento.value, fecha);
+
+  const validarInputs = () => {
+    if (!fechaNacimiento.value) return "Debes ingresar la Fecha de Nacimiento.";
+    if (isNaN(parseInt(edadGestacional.value))) return "Edad gestacional inválida.";
+    if (isNaN(parseInt(peso.value))) return "Peso inválido.";
+    return null;
+  };
+
+  document.getElementById("calcularBtn").addEventListener("click", () => {
+    const error = validarInputs();
+    if (error) return (resultadosDiv.innerHTML = `<p class="alerta">⚠️ ${error}</p>`);
+
+    const esUti = unidad.value === "uti_uci";
+    const eg = parseInt(edadGestacional.value);
+    const pesoVal = parseInt(peso.value);
+    const nac = fechaNacimiento.value;
+
+    let muestras = [];
+    let alertas = [];
+
+    // --- CUIDADOS BÁSICOS ---
+    if (!esUti) {
+      muestras.push({ id: "M1", descripcion: "Primera muestra entre 40–48 h de vida", diaRecomendado: 2 });
+      if (eg < 37 || pesoVal < 2500)
+        muestras.push({ id: "M2", descripcion: "Segunda muestra a los 15 días (pretérmino o bajo peso)", diaRecomendado: 15 });
+      if (sindromeDown.checked)
+        muestras.push({ id: "M3", descripcion: "Tercera muestra a los 28 días (Síndrome de Down)", diaRecomendado: 28 });
+    }
+
+    // --- UTI / UCI ---
+    else {
+      muestras.push({ id: "M0", descripcion: "Muestra al ingreso (día 0)", diaRecomendado: 0 });
+      if (recibioM0.checked && m0Menos40h.checked)
+        muestras.push({ id: "M1", descripcion: "Nueva muestra entre 48–72h si M0 fue <40h", diaRecomendado: 3 });
+      else if (!recibioM0.checked)
+        muestras.push({ id: "M1", descripcion: "Muestra entre 40–48h (sin M0 previa)", diaRecomendado: 2 });
+
+      if (eg < 37 || pesoVal < 2500 || transfusionPreviaM1.checked || pesquisaDudosaM1.checked)
+        muestras.push({ id: "M2", descripcion: "Nueva muestra a los 28 días o al alta", diaRecomendado: 28 });
+
+      // M3a
+      if (
+        fechasTomadas.M2.value &&
+        edadEnDias(fechasTomadas.M2.value) < 10 &&
+        (eg < 37 || pesoVal < 2500 || transfusionMenos7Dias.checked)
+      ) {
+        muestras.push({
+          id: "M3a",
+          descripcion: "Nueva muestra (M3a) a los 15 días por pretérmino/bajo peso o transfusión reciente",
+          diaRecomendado: 15
+        });
       }
+
+      // M3b
+      if (
+        sindromeDown.checked &&
+        fechasTomadas.M2.value &&
+        edadEnDias(fechasTomadas.M2.value) < 21
+      ) {
+        muestras.push({
+          id: "M3b",
+          descripcion: "Nueva muestra (M3b) a los 28 días por Síndrome de Down y muestra previa <21 días",
+          diaRecomendado: 28
+        });
+      }
+    }
+
+    const esFechaCorrecta = (fechaTomada, diaRecomendado) => {
+      if (!fechaTomada) return false;
+      const diff = Math.abs(edadEnDias(fechaTomada) - diaRecomendado);
+      return diff <= 1;
     };
 
-    unidad.addEventListener("change", actualizarCondicionales);
-    actualizarCondicionales();
-
-    document.getElementById("calcularBtn").addEventListener("click", () => {
-      const fechaNac = new Date(fechaNacimiento.value);
-      const hoy = new Date();
-      const diferenciaDias = Math.floor((hoy - fechaNac) / (1000 * 3600 * 24));
-
-      let resultado = "";
-
-      // Mostrar observaciones si la muestra 2 se tomó antes de los 28 días, pero está justificada por alta
-      if (fechasTomadas.M2.value) {
-        const fechaM2 = new Date(fechasTomadas.M2.value);
-        const diasMuestra2 = Math.floor((fechaM2 - fechaNac) / (1000 * 3600 * 24));
-
-        if (diasMuestra2 < 28) {
-          if (diasMuestra2 <= 10) {
-            resultado += "<div class='alerta'>Muestra 2 tomada antes de los 28 días, verificar si fue por alta médica.</div>";
-          } else {
-            resultado += "<div class='alerta'>Muestra 2 tomada antes de los 28 días, confirmar justificación.</div>";
+    const muestrasValidas = muestras.map(m => m.id);
+    ["M0","M1","M2","M3","M3a","M3b"].forEach(id => {
+      const fechaT = fechasTomadas[id]?.value;
+      if (fechaT) {
+        if (!muestrasValidas.includes(id)) {
+          alertas.push(`⚠️ La muestra ${id} fue ingresada pero no corresponde según el algoritmo.`);
+        } else {
+          const mObj = muestras.find(m => m.id === id);
+          if (!esFechaCorrecta(fechaT, mObj.diaRecomendado)) {
+            alertas.push(`⚠️ La muestra ${id} fue tomada fuera del rango recomendado.`);
           }
         }
       }
-
-      // Validar para Muestra 3a
-      let muestra3a = false;
-      if (edadGestacional.value < 37 && peso.value < 2500) {
-        muestra3a = true;
-      }
-
-      if (muestra3a) {
-        resultado += `
-          <table>
-            <thead>
-              <tr>
-                <th>Muestra</th>
-                <th>Descripción</th>
-                <th>Fecha recomendada</th>
-                <th>Fecha tomada</th>
-                <th>Estado</th>
-                <th>Observaciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Muestra 3a</td>
-                <td>Recién nacidos de pretérmino o bajo peso al nacer</td>
-                <td>Se recomienda tomar muestra a los 28 días o al alta, lo que ocurra primero.</td>
-                <td>${fechasTomadas.M3.value ? fechasTomadas.M3.value : "Pendiente"}</td>
-                <td>${fechasTomadas.M3.value ? "Tomada" : "Pendiente"}</td>
-                <td>${fechasTomadas.M3.value ? "Confirmar si fue tomada a tiempo según criterios." : "Pendiente"}</td>
-              </tr>
-            </tbody>
-          </table>
-        `;
-      }
-
-      resultadosDiv.innerHTML = resultado;
     });
+
+    // Texto explicativo
+    let texto = `<p><strong>Recomendación:</strong> Corresponde la toma de las siguientes muestras según el algoritmo:</p>`;
+    muestras.forEach(m => {
+      const fechaRec = sumarDias(nac, m.diaRecomendado);
+      texto += `<p>• Corresponde la ${m.id} (${m.descripcion}). Se recomienda alrededor del <strong>${fechaRec}</strong>.</p>`;
+    });
+    if (alertas.length) texto += `<div class="alerta">${alertas.join("<br>")}</div>`;
+
+    // Tabla
+    let html = `${texto}<table><thead><tr>
+    <th>Muestra</th><th>Descripción</th><th>Fecha recomendada</th><th>Fecha tomada</th><th>Estado</th><th>Observaciones</th></tr></thead><tbody>`;
+    muestras.forEach(m => {
+      const fechaRec = sumarDias(nac, m.diaRecomendado);
+      const fechaT = fechasTomadas[m.id]?.value || "-";
+      let estado = "Pendiente", clase="pending", obs = "Se recomienda según protocolo.";
+      if (fechaT !== "-") {
+        if (esFechaCorrecta(fechaT, m.diaRecomendado)) { estado="Correcta"; clase="ok"; obs="Tomada dentro del rango recomendado."; }
+        else { estado="⚠️ Desviada"; clase="warning"; obs="Tomada fuera del rango recomendado."; }
+      }
+      html += `<tr><td>${m.id}</td><td>${m.descripcion}</td><td>${fechaRec}</td><td>${fechaT}</td><td class="${clase}">${estado}</td><td>${obs}</td></tr>`;
+    });
+    html += "</tbody></table>";
+    resultadosDiv.innerHTML = html;
   });
-  </script>
+});
+</script>
 </body>
 </html>
 
