@@ -7,156 +7,114 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 1em;
-            background: #f5f5f5;
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 10px;
         }
         .container {
-            max-width: 700px;
-            background: white;
-            padding: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 0 6px rgba(0,0,0,0.1);
+            background: #f9f9f9;
         }
-        h1, h2 {
+        h1, h2, h3 {
             text-align: center;
-        }
-        .input-group {
-            margin-bottom: 12px;
         }
         label {
             display: block;
-            margin-bottom: 4px;
+            margin-top: 10px;
             font-weight: bold;
         }
-        input[type="number"], input[type="date"], select {
+        input[type="number"],
+        select,
+        input[type="date"] {
             width: 100%;
             padding: 6px;
-            font-size: 1em;
-        }
-        input[type="checkbox"] {
-            margin-right: 8px;
+            margin-top: 4px;
+            box-sizing: border-box;
         }
         .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
+            margin-top: 10px;
+        }
+        .checkbox-group label {
+            font-weight: normal;
+            display: inline-block;
+            margin-left: 6px;
         }
         button {
-            padding: 10px 18px;
-            font-size: 1.1em;
+            margin-top: 15px;
+            padding: 10px 15px;
+            font-size: 16px;
             cursor: pointer;
+            border-radius: 4px;
             border: none;
-            background-color: #007bff;
+            background-color: #007BFF;
             color: white;
-            border-radius: 5px;
-            width: 100%;
         }
         button:hover {
             background-color: #0056b3;
         }
         .result-box {
-            background-color: #e9ecef;
-            padding: 15px;
-            border-radius: 6px;
             margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            background: white;
             white-space: pre-wrap;
+            min-height: 100px;
         }
-        .error {
-            color: red;
+        .info-text {
+            text-align: center;
+            font-style: italic;
+            margin-top: -10px;
+            margin-bottom: 20px;
+            color: #555;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Guía PNA de Tomas de Muestra</h1>
+        <p class="info-text">Creado por: Eu. Carlos Andrade</p>
 
-        <div class="input-group">
-            <label for="unidadIngreso">Unidad de Ingreso:</label>
-            <select id="unidadIngreso">
-                <option value="cuidados_basicos">Puerperio/Puericultura/Cuidados Básicos</option>
-                <option value="uti_uci">UTI-UCI</option>
-            </select>
-        </div>
+        <label for="unidadIngreso">Unidad de Ingreso:</label>
+        <select id="unidadIngreso">
+            <option value="cuidados_basicos">Puerperio/Puericultura/Cuidados Básicos</option>
+            <option value="uti_uci">UTI-UCI</option>
+        </select>
 
-        <div class="input-group">
-            <label for="fechaNacimiento">Fecha de Nacimiento:</label>
-            <input type="date" id="fechaNacimiento" />
-        </div>
+        <label for="edadGestacional">Edad Gestacional (semanas):</label>
+        <input type="number" id="edadGestacional" min="20" max="45" value="38" />
 
-        <div class="input-group">
-            <label for="edadGestacional">Edad Gestacional (semanas):</label>
-            <input type="number" id="edadGestacional" min="20" max="45" value="38" />
-        </div>
-
-        <div class="input-group">
-            <label for="pesoNacimiento">Peso de Nacimiento (gramos):</label>
-            <input type="number" id="pesoNacimiento" min="500" max="6000" value="3000" />
-        </div>
-
-        <div id="condicionales-uti-uci" style="display:none;">
-            <div class="checkbox-group">
-                <input type="checkbox" id="recibioM0" />
-                <label for="recibioM0">¿Recibió Muestra 0 (M0)?</label>
-            </div>
-            <div class="checkbox-group" id="m0-tiempo-group" style="display:none;">
-                <input type="checkbox" id="m0Menos40h" />
-                <label for="m0Menos40h">Muestra M0 fue tomada &lt; 40h de vida?</label>
-            </div>
-        </div>
+        <label for="pesoNacimiento">Peso de Nacimiento (gramos):</label>
+        <input type="number" id="pesoNacimiento" min="500" max="6000" value="3000" />
 
         <div class="checkbox-group">
             <input type="checkbox" id="sindromeDown" />
-            <label for="sindromeDown">¿Diagnóstico de Síndrome de Down?</label>
+            <label for="sindromeDown">Diagnóstico de Síndrome de Down</label>
         </div>
 
-        <div id="condicionales-m2-uti-uci" style="display:none;">
-            <p><strong>Consideraciones para Muestra 2 (UTI-UCI):</strong></p>
-            <div class="checkbox-group">
-                <input type="checkbox" id="transfusionPreviaM1" />
-                <label for="transfusionPreviaM1">¿Transfusión previa a M1?</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="pesquisaDudosaM1" />
-                <label for="pesquisaDudosaM1">¿Pesquisa dudosa en M1?</label>
-            </div>
-        </div>
+        <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+        <input type="date" id="fechaNacimiento" />
 
-        <div id="condicionales-m3a" style="display:none;">
-            <p><strong>Consideraciones para Muestra 3a (Casos Excepcionales):</strong></p>
-            <div class="checkbox-group">
-                <input type="checkbox" id="muestraPreviaAltaMenos10Dias" />
-                <label for="muestraPreviaAltaMenos10Dias">¿Muestra previa al alta &lt; 10 días de vida?</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="transfusionMenos7Dias" />
-                <label for="transfusionMenos7Dias">¿Transfusión &lt; 7 días desde muestra previa?</label>
-            </div>
-        </div>
+        <h3>Fechas de toma de muestras realizadas (si ya las tienen)</h3>
+        <label for="fechaM1">Fecha Muestra 1 (M1):</label>
+        <input type="date" id="fechaM1" />
 
-        <hr />
+        <label for="fechaM2">Fecha Muestra 2 (M2):</label>
+        <input type="date" id="fechaM2" />
 
-        <h2>Fechas de Toma de Muestras (opcional):</h2>
+        <label for="fechaM3">Fecha Muestra 3 (M3):</label>
+        <input type="date" id="fechaM3" />
 
-        <div class="input-group">
-            <label for="fechaM1">Fecha Muestra 1 (M1):</label>
-            <input type="date" id="fechaM1" />
-        </div>
-        <div class="input-group">
-            <label for="fechaM2">Fecha Muestra 2 (M2):</label>
-            <input type="date" id="fechaM2" />
-        </div>
-        <div class="input-group">
-            <label for="fechaM3">Fecha Muestra 3 (M3):</label>
-            <input type="date" id="fechaM3" />
-        </div>
-
-        <div class="input-group">
-            <button id="calcularBtn">Calcular Recomendación</button>
-        </div>
+        <button id="calcularBtn">Calcular Recomendación</button>
 
         <div class="result-box" id="resultados">
             Introduce los datos y haz clic en "Calcular Recomendación".
         </div>
     </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
 
 
