@@ -1,5 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. Obtenemos referencias a todos los elementos HTML ---
+    // --- Nuevas referencias para fecha nacimiento y fechas muestras ---
+    const fechaNacimientoInput = document.getElementById('fechaNacimiento');
+    const fechasRecomendadasDiv = document.getElementById('fechasRecomendadas');
+
+    // Función para sumar días a una fecha
+    const sumarDias = (fecha, dias) => {
+        const nuevaFecha = new Date(fecha);
+        nuevaFecha.setDate(nuevaFecha.getDate() + dias);
+        return nuevaFecha;
+    };
+
+    // Función para formatear fecha YYYY-MM-DD
+    const formatDate = (fecha) => fecha.toISOString().split('T')[0];
+
+    // Actualizar fechas recomendadas según fecha de nacimiento
+    fechaNacimientoInput.addEventListener('change', () => {
+        const fechaNacimiento = new Date(fechaNacimientoInput.value);
+        if (!fechaNacimiento.getTime()) {
+            fechasRecomendadasDiv.innerHTML = '';
+            return;
+        }
+
+        // Basado en tu guía, asignamos días a cada muestra
+        // Ajusta estos valores según necesidad real:
+        const muestra0 = sumarDias(fechaNacimiento, 0);   // Ingreso
+        const muestra1 = sumarDias(fechaNacimiento, 2);   // Entre 40-48 horas (2 días)
+        const muestra2 = sumarDias(fechaNacimiento, 15);  // A los 15 días (ejemplo)
+        const muestra3 = sumarDias(fechaNacimiento, 28);  // A los 28 días
+
+        fechasRecomendadasDiv.innerHTML = `
+            <p>Fechas recomendadas para las muestras:</p>
+            <ul>
+                <li><strong>Muestra 0 (M0):</strong> ${formatDate(muestra0)}</li>
+                <li><strong>Muestra 1 (M1):</strong> ${formatDate(muestra1)}</li>
+                <li><strong>Muestra 2 (M2):</strong> ${formatDate(muestra2)}</li>
+                <li><strong>Muestra 3 (M3):</strong> ${formatDate(muestra3)}</li>
+            </ul>
+        `;
+    });
+
+    // --- Código original tuyo (referencias y funciones) ---
     const unidadIngresoSelect = document.getElementById('unidadIngreso');
     const edadGestacionalInput = document.getElementById('edadGestacional');
     const pesoNacimientoInput = document.getElementById('pesoNacimiento');
@@ -7,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const calcularBtn = document.getElementById('calcularBtn');
     const resultadosDiv = document.getElementById('resultados');
 
-    // Grupos condicionales
     const condicionalesUtiUciDiv = document.getElementById('condicionales-uti-uci');
     const recibioM0Checkbox = document.getElementById('recibioM0');
     const m0TiempoGroupDiv = document.getElementById('m0-tiempo-group');
@@ -21,27 +60,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const muestraPreviaAltaMenos10DiasCheckbox = document.getElementById('muestraPreviaAltaMenos10Dias');
     const transfusionMenos7DiasCheckbox = document.getElementById('transfusionMenos7Dias');
 
-
-    // --- 2. Función que muestra/oculta los grupos condicionales ---
     const actualizarVisibilidadCampos = () => {
-        // Siempre ocultamos todo al inicio
         condicionalesUtiUciDiv.style.display = 'none';
         m0TiempoGroupDiv.style.display = 'none';
         condicionalesM2UtiUciDiv.style.display = 'none';
         condicionalesM3aDiv.style.display = 'none';
 
-        // Si el usuario selecciona "UTI-UCI", mostramos los checkboxes
         if (unidadIngresoSelect.value === 'uti_uci') {
             condicionalesUtiUciDiv.style.display = 'block';
             condicionalesM2UtiUciDiv.style.display = 'block';
             condicionalesM3aDiv.style.display = 'block';
 
-            // Si marca “¿Recibió M0?”, mostramos el segundo checkbox
             if (recibioM0Checkbox.checked) {
                 m0TiempoGroupDiv.style.display = 'flex';
             }
         } else {
-            // Si cambia a otra unidad (Puerperio), limpiamos los valores
             recibioM0Checkbox.checked = false;
             m0Menos40hCheckbox.checked = false;
             transfusionPreviaM1Checkbox.checked = false;
@@ -51,16 +84,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-
-    // --- 3. Escuchamos los cambios para actualizar en tiempo real ---
     unidadIngresoSelect.addEventListener('change', actualizarVisibilidadCampos);
     recibioM0Checkbox.addEventListener('change', actualizarVisibilidadCampos);
 
-    // Estado inicial
     actualizarVisibilidadCampos();
 
-
-    // --- 4. Cálculo de las recomendaciones ---
     calcularBtn.addEventListener('click', () => {
         const unidadIngreso = unidadIngresoSelect.value;
         const edadGestacional = parseInt(edadGestacionalInput.value);
