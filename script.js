@@ -1,45 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Nuevas referencias para fecha nacimiento y fechas muestras ---
-    const fechaNacimientoInput = document.getElementById('fechaNacimiento');
-    const fechasRecomendadasDiv = document.getElementById('fechasRecomendadas');
-
-    // Función para sumar días a una fecha
-    const sumarDias = (fecha, dias) => {
-        const nuevaFecha = new Date(fecha);
-        nuevaFecha.setDate(nuevaFecha.getDate() + dias);
-        return nuevaFecha;
-    };
-
-    // Función para formatear fecha YYYY-MM-DD
-    const formatDate = (fecha) => fecha.toISOString().split('T')[0];
-
-    // Actualizar fechas recomendadas según fecha de nacimiento
-    fechaNacimientoInput.addEventListener('change', () => {
-        const fechaNacimiento = new Date(fechaNacimientoInput.value);
-        if (!fechaNacimiento.getTime()) {
-            fechasRecomendadasDiv.innerHTML = '';
-            return;
-        }
-
-        // Basado en tu guía, asignamos días a cada muestra
-        // Ajusta estos valores según necesidad real:
-        const muestra0 = sumarDias(fechaNacimiento, 0);   // Ingreso
-        const muestra1 = sumarDias(fechaNacimiento, 2);   // Entre 40-48 horas (2 días)
-        const muestra2 = sumarDias(fechaNacimiento, 15);  // A los 15 días (ejemplo)
-        const muestra3 = sumarDias(fechaNacimiento, 28);  // A los 28 días
-
-        fechasRecomendadasDiv.innerHTML = `
-            <p>Fechas recomendadas para las muestras:</p>
-            <ul>
-                <li><strong>Muestra 0 (M0):</strong> ${formatDate(muestra0)}</li>
-                <li><strong>Muestra 1 (M1):</strong> ${formatDate(muestra1)}</li>
-                <li><strong>Muestra 2 (M2):</strong> ${formatDate(muestra2)}</li>
-                <li><strong>Muestra 3 (M3):</strong> ${formatDate(muestra3)}</li>
-            </ul>
-        `;
-    });
-
-    // --- Código original tuyo (referencias y funciones) ---
+    // Referencias a elementos del DOM
     const unidadIngresoSelect = document.getElementById('unidadIngreso');
     const edadGestacionalInput = document.getElementById('edadGestacional');
     const pesoNacimientoInput = document.getElementById('pesoNacimiento');
@@ -60,7 +20,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const muestraPreviaAltaMenos10DiasCheckbox = document.getElementById('muestraPreviaAltaMenos10Dias');
     const transfusionMenos7DiasCheckbox = document.getElementById('transfusionMenos7Dias');
 
-    const actualizarVisibilidadCampos = () => {
+    const fechaNacimientoInput = document.getElementById('fechaNacimiento');
+    const fechaM1Input = document.getElementById('fechaM1');
+    const fechaM2Input = document.getElementById('fechaM2');
+    const fechaM3Input = document.getElementById('fechaM3');
+
+    // Mostrar u ocultar campos según unidad seleccionada
+    function actualizarVisibilidadCampos() {
         condicionalesUtiUciDiv.style.display = 'none';
         m0TiempoGroupDiv.style.display = 'none';
         condicionalesM2UtiUciDiv.style.display = 'none';
@@ -75,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 m0TiempoGroupDiv.style.display = 'flex';
             }
         } else {
+            // Limpiar checkboxes no aplicables
             recibioM0Checkbox.checked = false;
             m0Menos40hCheckbox.checked = false;
             transfusionPreviaM1Checkbox.checked = false;
@@ -82,12 +49,28 @@ document.addEventListener('DOMContentLoaded', () => {
             muestraPreviaAltaMenos10DiasCheckbox.checked = false;
             transfusionMenos7DiasCheckbox.checked = false;
         }
-    };
+    }
 
     unidadIngresoSelect.addEventListener('change', actualizarVisibilidadCampos);
     recibioM0Checkbox.addEventListener('change', actualizarVisibilidadCampos);
-
     actualizarVisibilidadCampos();
+
+    // Suma días a una fecha (string) y devuelve Date
+    function sumarDias(fechaStr, dias) {
+        if (!fechaStr) return null;
+        const fecha = new Date(fechaStr);
+        fecha.setDate(fecha.getDate() + dias);
+        return fecha;
+    }
+
+    // Formatea fecha a dd/mm/yyyy
+    function formatFecha(date) {
+        if (!date) return 'N/A';
+        const d = date.getDate().toString().padStart(2, '0');
+        const m = (date.getMonth() + 1).toString().padStart(2, '0');
+        const y = date.getFullYear();
+        return `${d}/${m}/${y}`;
+    }
 
     calcularBtn.addEventListener('click', () => {
         const unidadIngreso = unidadIngresoSelect.value;
@@ -102,59 +85,129 @@ document.addEventListener('DOMContentLoaded', () => {
         const muestraPreviaAltaMenos10Dias = muestraPreviaAltaMenos10DiasCheckbox.checked;
         const transfusionMenos7Dias = transfusionMenos7DiasCheckbox.checked;
 
-        let resultadosHTML = '';
+        const fechaNacimientoStr = fechaNacimientoInput.value;
+        const fechaM1Str = fechaM1Input.value;
+        const fechaM2Str = fechaM2Input.value;
+        const fechaM3Str = fechaM3Input.value;
 
+        // Validaciones básicas
+        if (!fechaNacimientoStr) {
+            resultadosDiv.innerHTML = '<p class="error">Por favor, ingresa la fecha de nacimiento.</p>';
+            return;
+        }
         if (isNaN(edadGestacional) || isNaN(pesoNacimiento) || edadGestacional <= 0 || pesoNacimiento <= 0) {
             resultadosDiv.innerHTML = '<p class="error">Por favor, introduce valores válidos para Edad Gestacional y Peso de Nacimiento.</p>';
             return;
         }
 
-        resultadosHTML += '<h2>Recomendaciones para Tomas de Muestra:</h2>';
-
+        // Construcción de texto con recomendaciones según unidad y condiciones
+        let recomendaciones = '';
         if (unidadIngreso === 'cuidados_basicos') {
-            resultadosHTML += `
-                <div class="recomendacion-grupo">
-                    <h3>Unidad: Puerperio/Puericultura/Cuidados Básicos</h3>
-                    <ul>
-                        <li><strong>Muestra 1 (M1):</strong> Entre 40-48 h de vida. Con leche materna o fórmula e independiente de la edad gestacional.</li>
-                        ${(edadGestacional < 37 || pesoNacimiento < 2500)
-                            ? '<li><strong>Muestra 2 (M2):</strong> A los 15 días de vida. (Aplica para RN pretérminos &lt;37 semanas y/o bajo peso al nacer &lt;2.500 gr).</li>'
-                            : ''}
-                        ${tieneSindromeDown
-                            ? '<li><strong>Muestra 3 (M3):</strong> A los 28 días de vida. (Aplica para RN con diagnóstico de Síndrome de Down).</li>'
-                            : ''}
-                    </ul>
-                </div>
-            `;
+            recomendaciones += 'Unidad: Puerperio/Puericultura/Cuidados Básicos\n';
+            recomendaciones += '- Muestra 1 (M1): Entre 40-48 h de vida.\n';
+            if (edadGestacional < 37 || pesoNacimiento < 2500) {
+                recomendaciones += '- Muestra 2 (M2): A los 15 días de vida.\n';
+            }
+            if (tieneSindromeDown) {
+                recomendaciones += '- Muestra 3 (M3): A los 28 días de vida.\n';
+            }
         } else if (unidadIngreso === 'uti_uci') {
-            resultadosHTML += `
-                <div class="recomendacion-grupo">
-                    <h3>Unidad: UTI-UCI</h3>
-                    <ul>
-                        <li><strong>Muestra 0 (M0):</strong> Al ingreso a la unidad. Antes de medicamentos o nutrición parenteral. Incluye todos los neonatos.</li>
-                        ${recibioM0 && m0Menos40h
-                            ? '<li><strong>Muestra 1 (M1):</strong> Si M0 fue tomada &lt; 40 h de vida, tomar nueva muestra entre 48-72 h.</li>'
-                            : !recibioM0
-                                ? '<li><strong>Muestra 1 (M1):</strong> Si NO se tomó M0, tomar la primera muestra entre 40-48 h de vida.</li>'
-                                : '<li>Si M0 fue tomada &ge; 40 h de vida, NO se requiere M1 adicional.</li>'
-                        }
-                        ${(edadGestacional < 37 || pesoNacimiento < 2500 || transfusionPreviaM1 || pesquisaDudosaM1)
-                            ? '<li><strong>Muestra 2 (M2):</strong> A los 28 días o al alta (lo que ocurra primero).</li>'
-                            : ''}
-                    </ul>
-                    <h3>Casos Excepcionales (Muestra 3):</h3>
-                    <ul>
-                        ${tieneSindromeDown
-                            ? '<li><strong>Muestra 3b (Síndrome de Down):</strong> RN con diagnóstico o sospecha. Si muestra previa fue &lt;21 días, tomar nueva muestra a los 28 días.</li>'
-                            : (muestraPreviaAltaMenos10Dias || pesoNacimiento < 2500 || edadGestacional < 37 || transfusionMenos7Dias)
-                                ? '<li><strong>Muestra 3a (Casos Excepcionales):</strong> Tomar nueva muestra a los 15 días si aplica alguna condición.</li>'
-                                : '<li>No se cumplen los criterios para Muestra 3a o M3b.</li>'
-                        }
-                    </ul>
-                </div>
-            `;
+            recomendaciones += 'Unidad: UTI-UCI\n';
+            recomendaciones += '- Muestra 0 (M0): Al ingreso a la unidad (antes de medicamentos o nutrición parenteral).\n';
+
+            if (recibioM0 && m0Menos40h) {
+                recomendaciones += '- Muestra 1 (M1): Si M0 fue tomada < 40 h de vida, tomar nueva muestra entre 48-72 h.\n';
+            } else if (!recibioM0) {
+                recomendaciones += '- Muestra 1 (M1): Si NO se tomó M0, tomar la primera muestra entre 40-48 h de vida.\n';
+            } else {
+                recomendaciones += '- Si M0 fue tomada ≥ 40 h de vida, NO se requiere M1 adicional.\n';
+            }
+
+            if (edadGestacional < 37 || pesoNacimiento < 2500 || transfusionPreviaM1 || pesquisaDudosaM1) {
+                recomendaciones += '- Muestra 2 (M2): A los 28 días o al alta (lo que ocurra primero).\n';
+            }
+
+            recomendaciones += '\nCasos Excepcionales (Muestra 3):\n';
+            if (tieneSindromeDown) {
+                recomendaciones += '- Muestra 3b (Síndrome de Down): Tomar nueva muestra a los 28 días si muestra previa fue < 21 días.\n';
+            } else if (muestraPreviaAltaMenos10Dias || pesoNacimiento < 2500 || edadGestacional < 37 || transfusionMenos7Dias) {
+                recomendaciones += '- Muestra 3a (Casos Excepcionales): Tomar nueva muestra a los 15 días si aplica alguna condición.\n';
+            } else {
+                recomendaciones += '- No se cumplen los criterios para Muestra 3a o M3b.\n';
+            }
         }
 
-        resultadosDiv.innerHTML = resultadosHTML;
+        // Convertimos fecha de nacimiento a Date
+        const fechaNac = new Date(fechaNacimientoStr);
+
+        // Funciones auxiliares para calcular fechas recomendadas
+        function fechaDesdeDias(dias) {
+            const f = new Date(fechaNac);
+            f.setDate(f.getDate() + dias);
+            return f;
+        }
+
+        // Guardamos fechas recomendadas
+        let fechaRecM1 = null;
+        let fechaRecM1_rango = null;
+        let fechaRecM2 = null;
+        let fechaRecM3 = null;
+
+        if (unidadIngreso === 'cuidados_basicos') {
+            fechaRecM1_rango = { min: fechaDesdeDias(2), max: fechaDesdeDias(2) }; // 40-48 h ~ 2 días
+            if (edadGestacional < 37 || pesoNacimiento < 2500) {
+                fechaRecM2 = fechaDesdeDias(15);
+            }
+            if (tieneSindromeDown) {
+                fechaRecM3 = fechaDesdeDias(28);
+            }
+        } else if (unidadIngreso === 'uti_uci') {
+            if (recibioM0 && m0Menos40h) {
+                fechaRecM1_rango = { min: fechaDesdeDias(2), max: fechaDesdeDias(3) }; // 48-72 h
+            } else if (!recibioM0) {
+                fechaRecM1_rango = { min: fechaDesdeDias(2), max: fechaDesdeDias(2) }; // 40-48 h ~ 2 días
+            } else {
+                fechaRecM1_rango = null;
+            }
+            if (edadGestacional < 37 || pesoNacimiento < 2500 || transfusionPreviaM1 || pesquisaDudosaM1) {
+                fechaRecM2 = fechaDesdeDias(28);
+            }
+            if (tieneSindromeDown) {
+                fechaRecM3 = fechaDesdeDias(28);
+            } else if (muestraPreviaAltaMenos10Dias || pesoNacimiento < 2500 || edadGestacional < 37 || transfusionMenos7Dias) {
+                fechaRecM3 = fechaDesdeDias(15);
+            }
+        }
+
+        // Estado de las muestras basado en fechas ingresadas
+        let estadoMuestras = '\nEstado de las muestras basadas en fechas ingresadas:\n';
+
+        // Parsear fechas de muestras si fueron ingresadas
+        let fM1 = fechaM1Str ? new Date(fechaM1Str) : null;
+        let fM2 = fechaM2Str ? new Date(fechaM2Str) : null;
+        let fM3 = fechaM3Str ? new Date(fechaM3Str) : null;
+
+        // Función para mostrar estado de cada muestra
+        function verificarMuestra(n, fechaReal, fechaRecomendada, rango = false) {
+            if (fechaReal) {
+                return `- Muestra ${n} tomada el ${formatFecha(fechaReal)}.\n`;
+            } else if (fechaRecomendada) {
+                if (rango) {
+                    return `- Muestra ${n} pendiente, recomendada entre ${formatFecha(fechaRecomendada.min)} y ${formatFecha(fechaRecomendada.max)}.\n`;
+                } else {
+                    return `- Muestra ${n} pendiente, recomendada el ${formatFecha(fechaRecomendada)}.\n`;
+                }
+            } else {
+                return `- Muestra ${n} no aplicable o no recomendada.\n`;
+            }
+        }
+
+        estadoMuestras += verificarMuestra(1, fM1, fechaRecM1_rango ? fechaRecM1_rango : fechaRecM1, fechaRecM1_rango !== null);
+        estadoMuestras += verificarMuestra(2, fM2, fechaRecM2);
+        estadoMuestras += verificarMuestra(3, fM3, fechaRecM3);
+
+        // Mostrar resultados en el div
+        resultadosDiv.textContent = recomendaciones + estadoMuestras;
     });
 });
+
