@@ -101,6 +101,12 @@
     border-radius: 5px;
     margin-top: 15px;
   }
+  .toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+  }
 </style>
 </head>
 <body>
@@ -173,6 +179,14 @@
     <div class="input-group"><label for="fechaM3">Muestra 3 (M3):</label><input type="date" id="fechaM3" /></div>
 
     <div class="input-group">
+      <label>Modo de visualización de fecha:</label>
+      <div class="toggle-group">
+        <label><input type="radio" name="modoFecha" value="exacto" checked> Exacta</label>
+        <label><input type="radio" name="modoFecha" value="rango"> Rango</label>
+      </div>
+    </div>
+
+    <div class="input-group">
       <button id="calcularBtn">Calcular Recomendación</button>
     </div>
 
@@ -194,11 +208,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const m0Menos40h = document.getElementById("m0Menos40h");
   const transfusionPreviaM1 = document.getElementById("transfusionPreviaM1");
   const pesquisaDudosaM1 = document.getElementById("pesquisaDudosaM1");
-  const muestraPreviaAltaMenos10Dias = document.getElementById("muestraPreviaAltaMenos10Dias");
   const transfusionMenos7Dias = document.getElementById("transfusionMenos7Dias");
   const fechaNacimiento = document.getElementById("fechaNacimiento");
   const resultadosDiv = document.getElementById("resultados");
-
   const fechasTomadas = {
     M0: document.getElementById("fechaM0"),
     M1: document.getElementById("fechaM1"),
@@ -240,20 +252,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const eg = parseInt(edadGestacional.value);
     const pesoVal = parseInt(peso.value);
     const nac = fechaNacimiento.value;
+    const modoFecha = document.querySelector('input[name="modoFecha"]:checked').value;
 
     let muestras = [];
     let alertas = [];
+    let topAlerts = [];
 
-    // CUIDADOS BÁSICOS
+    // --- CUIDADOS BÁSICOS ---
     if (!esUti) {
-      muestras.push({ id: "M1", descripcion: "Primera muestra entre 40–48 h de vida", diaRecomendado: 2 });
+      muestras.push({ id: "M1", descripcion: "Primera muestra entre 40–48h de vida", diaRecomendado: 2 });
       if (eg < 37 || pesoVal < 2500)
         muestras.push({ id: "M2", descripcion: "Segunda muestra a los 15 días (pretérmino o bajo peso)", diaRecomendado: 15 });
       if (sindromeDown.checked)
         muestras.push({ id: "M3", descripcion: "Tercera muestra a los 28 días (Síndrome de Down)", diaRecomendado: 28 });
     }
 
-    // UTI / UCI
+    // --- UTI/UCI ---
     else {
       muestras.push({ id: "M0", descripcion: "Muestra al ingreso (día 0)", diaRecomendado: 0 });
       if (recibioM0.checked && m0Menos40h.checked)
@@ -264,83 +278,88 @@ document.addEventListener("DOMContentLoaded", () => {
       if (eg < 37 || pesoVal < 2500 || transfusionPreviaM1.checked || pesquisaDudosaM1.checked)
         muestras.push({ id: "M2", descripcion: "Nueva muestra a los 28 días o al alta", diaRecomendado: 28 });
 
-      // --- Determinar última muestra tomada (M2 o M1 o M0)
+      // --- Determinar última muestra tomada
       const ultimaTomada = ["M3","M2","M1","M0"].find(id => fechasTomadas[id]?.value);
       const fechaUltima = ultimaTomada ? fechasTomadas[ultimaTomada].value : null;
 
-      // --- M3a y M3b (excluyentes)
-      let generoM3a = false;
-      if (
-        fechaUltima &&
-        edadEnDias(fechaUltima) < 10 &&
-        (eg < 37 || pesoVal < 2500 || transfusionMenos7Dias.checked)
-      ) {
-        muestras.push({
-          id: "M3a",
-          descripcion: "Nueva muestra (M3a) a los 15 días por pretérmino/bajo peso o transfusión reciente",
-          diaRecomendado: 15
-        });
-        generoM3a = true;
-      }
+      // --- M3a / M3b excluyentes
+let generoM3a = false;
+if (
+  fechaUltima &&
+  edadEnDias(fechaUltima) < 10 &&
+  eg < 37 &&
+  pesoVal < 2500 &&
+  transfusionMenos7Dias.checked
+) {
+  muestras.push({
+    id: "M3a",
+    descripcion:
+      "Nueva muestra (M3a) a los 15 días por muestra previa al alta <10d, RN pretérmino (<37 sem), bajo peso (<2500 g) y transfusión <7 días.",
+    diaRecomendado: 15,
+  });
+  generoM3a = true;
+}
 
-      if (
-        !generoM3a &&
-        sindromeDown.checked &&
-        fechaUltima &&
-        edadEnDias(fechaUltima) < 21
-      ) {
-        muestras.push({
-          id: "M3b",
-          descripcion: "Nueva muestra (M3b) a los 28 días por Síndrome de Down y muestra previa <21 días",
-          diaRecomendado: 28
-        });
-      }
-    }
+if (!generoM3a && sindromeDown.checked && fechaUltima && edadEnDias(fechaUltima) < 21) {
+  muestras.push({
+    id: "M3b",
+    descripcion:
+      "Nueva muestra (M3b) a los 28 días (Síndrome de Down y muestra previa <21 días).",
+    diaRecomendado: 28,
+  });
+}
 
-    // --- Validación de fechas --- 
-    const esFechaCorrecta = (fechaTomada, diaRecomendado, id) => {
+
+    // --- Validación de fechas diferenciada ---
+    const esFechaCorrecta = (fechaTomada, diaRecomendado, id, contextoUti) => {
       if (!fechaTomada) return false;
       const edad = edadEnDias(fechaTomada);
-      if (id === "M2") return edad <= 28; // M2 válida hasta 28 días
-      const diff = Math.abs(edad - diaRecomendado);
-      return diff <= 1;
+
+      if (id === "M2") {
+        if (contextoUti) return edad <= 28;
+        else return Math.abs(edad - 15) <= 1;
+      }
+      return Math.abs(edad - diaRecomendado) <= 1;
     };
 
+    // --- Evaluación de alertas ---
     const muestrasValidas = muestras.map(m => m.id);
     ["M0","M1","M2","M3","M3a","M3b"].forEach(id => {
       const fechaT = fechasTomadas[id]?.value;
       if (fechaT) {
         if (!muestrasValidas.includes(id)) {
           alertas.push(`⚠️ La muestra ${id} fue ingresada pero no corresponde según el algoritmo.`);
+          topAlerts.push(`Muestra ${id} seleccionada como tomada no corresponde según algoritmo.`);
         } else {
           const mObj = muestras.find(m => m.id === id);
-          if (!esFechaCorrecta(fechaT, mObj.diaRecomendado, mObj.id)) {
+          if (!esFechaCorrecta(fechaT, mObj.diaRecomendado, mObj.id, esUti))
             alertas.push(`⚠️ La muestra ${id} fue tomada fuera del rango recomendado.`);
-          }
         }
       }
     });
 
-    // --- Texto explicativo ---
+    // --- Salida ---
     let texto = `<p><strong>Recomendación:</strong> Corresponde la toma de las siguientes muestras según el algoritmo:</p>`;
-
-    // 🔹 Modo 1: fechas exactas
     muestras.forEach(m => {
       const fechaRec = sumarDias(nac, m.diaRecomendado);
-      texto += `<p>• Corresponde la ${m.id} (${m.descripcion}). Se recomienda alrededor del <strong>${fechaRec}</strong>.</p>`;
+      if (modoFecha === "exacto")
+        texto += `<p>• ${m.id}: ${m.descripcion}. Recomendado el <strong>${fechaRec}</strong>.</p>`;
+      else
+        texto += `<p>• ${m.id}: ${m.descripcion}. <em>Entre los días ${m.diaRecomendado-1} y ${m.diaRecomendado+1} (aprox. ${fechaRec}).</em></p>`;
     });
 
     if (alertas.length) texto += `<div class="alerta">${alertas.join("<br>")}</div>`;
+    if (topAlerts.length) texto = `<div class="alerta">${topAlerts.join("<br>")}</div>` + texto;
 
-    // --- Tabla de resumen ---
     let html = `${texto}<table><thead><tr>
-    <th>Muestra</th><th>Descripción</th><th>Fecha recomendada</th><th>Fecha tomada</th><th>Estado</th><th>Observaciones</th></tr></thead><tbody>`;
+      <th>Muestra</th><th>Descripción</th><th>Fecha recomendada</th><th>Fecha tomada</th><th>Estado</th><th>Observaciones</th>
+    </tr></thead><tbody>`;
     muestras.forEach(m => {
       const fechaRec = sumarDias(nac, m.diaRecomendado);
       const fechaT = fechasTomadas[m.id]?.value || "-";
       let estado = "Pendiente", clase="pending", obs = "Se recomienda según protocolo.";
       if (fechaT !== "-") {
-        if (esFechaCorrecta(fechaT, m.diaRecomendado, m.id)) { estado="Correcta"; clase="ok"; obs="Tomada dentro del rango recomendado."; }
+        if (esFechaCorrecta(fechaT, m.diaRecomendado, m.id, esUti)) { estado="Correcta"; clase="ok"; obs="Tomada dentro del rango recomendado."; }
         else { estado="⚠️ Desviada"; clase="warning"; obs="Tomada fuera del rango recomendado."; }
       }
       html += `<tr><td>${m.id}</td><td>${m.descripcion}</td><td>${fechaRec}</td><td>${fechaT}</td><td class="${clase}">${estado}</td><td>${obs}</td></tr>`;
@@ -352,3 +371,5 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
+
