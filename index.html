@@ -324,11 +324,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- Texto explicativo ---
     let texto = `<p><strong>Recomendación:</strong> Corresponde la toma de las siguientes muestras según el algoritmo:</p>`;
 
-    // 🔹 Modo 1: fechas exactas
+    // 🔹 Modo 2 (comparativo): rangos sugeridos
+    texto += `<hr><h4>Visualización alternativa (rango sugerido)</h4>`;
     muestras.forEach(m => {
       const fechaRec = sumarDias(nac, m.diaRecomendado);
-      texto += `<p>• Corresponde la ${m.id} (${m.descripcion}). Se recomienda alrededor del <strong>${fechaRec}</strong>.</p>`;
+      texto += `<p>• ${m.id}: ${m.descripcion}. <br><em>Se recomienda entre los días ${m.diaRecomendado-1} y ${m.diaRecomendado+1} de vida (aprox. ${fechaRec}).</em></p>`;
     });
+
+    if (alertas.length) texto += `<div class="alerta">${alertas.join("<br>")}</div>`;
 
     // --- Tabla de resumen ---
     let html = `${texto}<table><thead><tr>
