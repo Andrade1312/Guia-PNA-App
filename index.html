@@ -101,6 +101,15 @@
     border-radius: 5px;
     margin-top: 15px;
   }
+
+  /* pequeño estilo para el toggle */
+  .toggle-group {
+    display:flex;
+    gap:12px;
+    align-items:center;
+    margin-top:8px;
+  }
+  .toggle-group input[type="radio"] { margin-left:6px; }
 </style>
 </head>
 <body>
@@ -171,6 +180,17 @@
     <div class="input-group"><label for="fechaM1">Muestra 1 (M1):</label><input type="date" id="fechaM1" /></div>
     <div class="input-group"><label for="fechaM2">Muestra 2 (M2):</label><input type="date" id="fechaM2" /></div>
     <div class="input-group"><label for="fechaM3">Muestra 3 (M3):</label><input type="date" id="fechaM3" /></div>
+
+    <!-- Toggle modo fecha -->
+    <div class="input-group">
+      <label>Modo visualización fecha:</label>
+      <div class="toggle-group">
+        <label for="modoExacto">Exacta</label>
+        <input type="radio" id="modoExacto" name="modoFecha" value="exacto" checked>
+        <label for="modoRango">Rango</label>
+        <input type="radio" id="modoRango" name="modoFecha" value="rango">
+      </div>
+    </div>
 
     <div class="input-group">
       <button id="calcularBtn">Calcular Recomendación</button>
@@ -243,8 +263,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let muestras = [];
     let alertas = [];
+    let topAlerts = []; // Banner arriba de la tabla para muestras que no corresponden
 
-    // CUIDADOS BÁSICOS
+    // --- CUIDADOS BÁSICOS ---
     if (!esUti) {
       muestras.push({ id: "M1", descripcion: "Primera muestra entre 40–48 h de vida", diaRecomendado: 2 });
       if (eg < 37 || pesoVal < 2500)
@@ -253,7 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
         muestras.push({ id: "M3", descripcion: "Tercera muestra a los 28 días (Síndrome de Down)", diaRecomendado: 28 });
     }
 
-    // UTI / UCI
+    // --- UTI / UCI ---
     else {
       muestras.push({ id: "M0", descripcion: "Muestra al ingreso (día 0)", diaRecomendado: 0 });
       if (recibioM0.checked && m0Menos40h.checked)
@@ -264,11 +285,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (eg < 37 || pesoVal < 2500 || transfusionPreviaM1.checked || pesquisaDudosaM1.checked)
         muestras.push({ id: "M2", descripcion: "Nueva muestra a los 28 días o al alta", diaRecomendado: 28 });
 
-      // --- Determinar última muestra tomada (M2 o M1 o M0)
+      // M3a / M3b usando la última muestra tomada (práctico)
       const ultimaTomada = ["M3","M2","M1","M0"].find(id => fechasTomadas[id]?.value);
       const fechaUltima = ultimaTomada ? fechasTomadas[ultimaTomada].value : null;
 
-      // --- M3a y M3b (excluyentes)
       let generoM3a = false;
       if (
         fechaUltima &&
@@ -297,11 +317,23 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // --- Validación de fechas --- 
-    const esFechaCorrecta = (fechaTomada, diaRecomendado, id) => {
+    // --- Validación de fechas ---
+    // ahora acepta contexto de UTI/CUIDADOS para validar M2 correctamente
+    const esFechaCorrecta = (fechaTomada, diaRecomendado, id, esUtiContext) => {
       if (!fechaTomada) return false;
       const edad = edadEnDias(fechaTomada);
-      if (id === "M2") return edad <= 28; // M2 válida hasta 28 días
+
+      if (id === "M2") {
+        if (esUtiContext) {
+          // UTI/UCI: M2 válida si se toma hasta 28 días (incluye alta temprana)
+          return edad <= 28;
+        } else {
+          // Cuidados básicos: M2 se espera alrededor del día 15 (tolerancia ±1 día)
+          return Math.abs(edad - diaRecomendado) <= 1;
+        }
+      }
+
+      // Para el resto, tolerancia ±1 día respecto al día recomendado
       const diff = Math.abs(edad - diaRecomendado);
       return diff <= 1;
     };
@@ -311,36 +343,51 @@ document.addEventListener("DOMContentLoaded", () => {
       const fechaT = fechasTomadas[id]?.value;
       if (fechaT) {
         if (!muestrasValidas.includes(id)) {
+          // alerta estricta (se mantiene)
           alertas.push(`⚠️ La muestra ${id} fue ingresada pero no corresponde según el algoritmo.`);
+          // banner compacto arriba de la tabla con el texto pedido
+          topAlerts.push(`Muestra ${id} seleccionada como tomada no corresponde según algoritmo`);
         } else {
           const mObj = muestras.find(m => m.id === id);
-          if (!esFechaCorrecta(fechaT, mObj.diaRecomendado, mObj.id)) {
+          if (!esFechaCorrecta(fechaT, mObj.diaRecomendado, mObj.id, esUti)) {
             alertas.push(`⚠️ La muestra ${id} fue tomada fuera del rango recomendado.`);
           }
         }
       }
     });
 
-    // --- Texto explicativo ---
+    // --- Texto explicativo según modo (exacto o rango) ---
+    const modoFecha = document.querySelector('input[name="modoFecha"]:checked').value;
     let texto = `<p><strong>Recomendación:</strong> Corresponde la toma de las siguientes muestras según el algoritmo:</p>`;
 
-    // 🔹 Modo 1: fechas exactas
-    muestras.forEach(m => {
-      const fechaRec = sumarDias(nac, m.diaRecomendado);
-      texto += `<p>• Corresponde la ${m.id} (${m.descripcion}). Se recomienda alrededor del <strong>${fechaRec}</strong>.</p>`;
-    });
+    if (modoFecha === "exacto") {
+      muestras.forEach(m => {
+        const fechaRec = sumarDias(nac, m.diaRecomendado);
+        texto += `<p>• Corresponde la ${m.id} (${m.descripcion}). Se recomienda alrededor del <strong>${fechaRec}</strong>.</p>`;
+      });
+    } else {
+      texto += `<p><em>Modo rango seleccionado. Fechas estimadas:</em></p>`;
+      muestras.forEach(m => {
+        const fechaRec = sumarDias(nac, m.diaRecomendado);
+        texto += `<p>• ${m.id}: ${m.descripcion}. <br><em>Se recomienda entre los días ${m.diaRecomendado-1} y ${m.diaRecomendado+1} de vida (aprox. ${fechaRec}).</em></p>`;
+      });
+    }
 
+    // mantiene alertas estrictas debajo del texto
     if (alertas.length) texto += `<div class="alerta">${alertas.join("<br>")}</div>`;
 
+    // --- Banner específico arriba de la tabla para muestras no correspondientes ---
+    const alertBannerHtml = topAlerts.length ? `<div class="alerta">${topAlerts.join("<br>")}</div>` : "";
+
     // --- Tabla de resumen ---
-    let html = `${texto}<table><thead><tr>
+    let html = `${texto}${alertBannerHtml}<table><thead><tr>
     <th>Muestra</th><th>Descripción</th><th>Fecha recomendada</th><th>Fecha tomada</th><th>Estado</th><th>Observaciones</th></tr></thead><tbody>`;
     muestras.forEach(m => {
       const fechaRec = sumarDias(nac, m.diaRecomendado);
       const fechaT = fechasTomadas[m.id]?.value || "-";
       let estado = "Pendiente", clase="pending", obs = "Se recomienda según protocolo.";
       if (fechaT !== "-") {
-        if (esFechaCorrecta(fechaT, m.diaRecomendado, m.id)) { estado="Correcta"; clase="ok"; obs="Tomada dentro del rango recomendado."; }
+        if (esFechaCorrecta(fechaT, m.diaRecomendado, m.id, esUti)) { estado="Correcta"; clase="ok"; obs="Tomada dentro del rango recomendado."; }
         else { estado="⚠️ Desviada"; clase="warning"; obs="Tomada fuera del rango recomendado."; }
       }
       html += `<tr><td>${m.id}</td><td>${m.descripcion}</td><td>${fechaRec}</td><td>${fechaT}</td><td class="${clase}">${estado}</td><td>${obs}</td></tr>`;
@@ -352,3 +399,4 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
